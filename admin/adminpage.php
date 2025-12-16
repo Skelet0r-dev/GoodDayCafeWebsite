@@ -17,6 +17,29 @@ function fetchSalesSummary($dbConnection, string $granularity = 'daily', ?string
             break;
     }
 
+    /**
+ * Handle status update (mark order Completed, etc.)
+ */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
+    $orderId     = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
+    $newPosition = $_POST['new_position'] ?? '';
+
+    // Allowed positions; adjust to your values
+    $allowedPositions = ['Ongoing', 'Completed', 'Cancelled'];
+
+    if ($orderId > 0 && in_array($newPosition, $allowedPositions, true)) {
+        $updateSql    = "UPDATE dbo.[ORDER] SET POSITION = ? WHERE ORDER_ID = ?";
+        $updateParams = [$newPosition, $orderId];
+        $updateResult = sqlsrv_query($dbConnection, $updateSql, $updateParams);
+        if ($updateResult === false) {
+            error_log(print_r(sqlsrv_errors(), true));
+        }
+    }
+}
+
+
+
+
     $summarySql = "
         SELECT
             $periodExpression AS period,
@@ -74,7 +97,8 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
             o.ORDER_ID,
             o.USER_ID,
             o.ORDER_PLACED,
-            o.STATUS,
+            o.POSITION,          -- add this
+            o.STATUS,         -- keep/remove as needed
             oi.PRODUCT_ID,
             oi.PRODUCT_NAME,
             oi.QUANTITY,
@@ -84,6 +108,8 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
         JOIN dbo.[ORDER_ITEM] oi ON oi.ORDER_ID = o.ORDER_ID
         WHERE 1=1
     ";
+
+
     $transactionParams = [];
     if ($hasStartDate) {
         $transactionSql    .= " AND o.ORDER_PLACED >= ? ";
@@ -122,7 +148,7 @@ $connectionOptions = [
     "Uid"      => "",
     "PWD"      => "",
 ];
-include 'admin_reports_functions.php';
+
 
 $dbConnection = sqlsrv_connect($serverName, $connectionOptions);
 if ($dbConnection === false) {
@@ -356,35 +382,51 @@ while ($productRow = sqlsrv_fetch_array($productsResult)) {
             <div class="table-responsive">
                 <table class="table table-sm table-striped">
                     <thead>
-                        <tr>
-                            <th>Order ID</th><th>User ID</th><th>Date</th><th>Status</th>
-                            <th>Product ID</th><th>Product</th><th>Qty</th><th>Price</th><th>Line Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if (empty($reportDetail)): ?>
-                        <tr><td colspan="9" class="text-muted">No data</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($reportDetail as $transactionRow): ?>
-                            <tr>
-                                <td><?= (int)$transactionRow['ORDER_ID']; ?></td>
-                                <td><?= htmlspecialchars($transactionRow['USER_ID'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?= htmlspecialchars($transactionRow['ORDER_PLACED'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?= htmlspecialchars($transactionRow['STATUS'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?= (int)$transactionRow['PRODUCT_ID']; ?></td>
-                                <td><?= htmlspecialchars($transactionRow['PRODUCT_NAME'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?= (int)$transactionRow['QUANTITY']; ?></td>
-                                <td>₱<?= number_format((float)$transactionRow['PRICE'], 2); ?></td>
-                                <td>₱<?= number_format((float)$transactionRow['line_total'], 2); ?></td>
-                            </tr>
+    <tr>
+        <th>Order ID</th><th>User ID</th><th>Date</th><th>Position</th>
+        <th>Product ID</th><th>Product</th><th>Qty</th><th>Price</th><th>Line Total</th>
+        <th>Update</th> <!-- new column -->
+    </tr>
+</thead>
+<tbody>
+<?php if (empty($reportDetail)): ?>
+    <tr><td colspan="10" class="text-muted">No data</td></tr>
+<?php else: ?>
+    <?php foreach ($reportDetail as $transactionRow): ?>
+        <tr>
+            <td><?= (int)$transactionRow['ORDER_ID']; ?></td>
+            <td><?= htmlspecialchars($transactionRow['USER_ID'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= htmlspecialchars($transactionRow['ORDER_PLACED'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= htmlspecialchars($transactionRow['POSITION'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= (int)$transactionRow['PRODUCT_ID']; ?></td>
+            <td><?= htmlspecialchars($transactionRow['PRODUCT_NAME'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= (int)$transactionRow['QUANTITY']; ?></td>
+            <td>₱<?= number_format((float)$transactionRow['PRICE'], 2); ?></td>
+            <td>₱<?= number_format((float)$transactionRow['line_total'], 2); ?></td>
+            <td>
+                <form method="post" class="d-flex gap-1 align-items-center">
+                    <input type="hidden" name="order_id" value="<?= (int)$transactionRow['ORDER_ID']; ?>">
+                    <select name="new_position" class="form-select form-select-sm">
+                        <?php foreach (['Ongoing', 'Completed', 'Cancelled'] as $positionOption): ?>
+                            <option value="<?= $positionOption; ?>"
+                                <?= ($transactionRow['POSITION'] === $positionOption) ? 'selected' : ''; ?>>
+                                <?= $positionOption; ?>
+                            </option>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                    </tbody>
+                    </select>
+                    <button type="submit" name="update_position" class="btn btn-sm btn-primary">
+                        Save
+                    </button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php endif; ?>
+</tbody>
                 </table>
             </div>
         </div>
     </div>
-</div>
 
 <!-- Add Product Modal -->
 <div class="modal fade" id="add-product-modal" tabindex="-1" aria-hidden="true">

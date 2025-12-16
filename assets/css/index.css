@@ -1,0 +1,47 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Carousel height */
+.carousel,
+.carousel-inner,
+.carousel-item {
+  height: 100vh;
+}
+
+/* Position overlay correctly */
+.carousel-item {
+  position: relative;
+}
+
+/* Constrain and center images */
+.carousel-item img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;      /* use 'contain' if you prefer no cropping */
+  object-position: center center;
+  display: block;
+
+}
+
+/* Overlay (optional) */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.35) 100%);
+  pointer-events: none;
+}
+
+header {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.navbar .nav-link {
+  color: #fff !important;
+}
+
+.navbar .nav-link.active {
+  font-weight: 700;
+}
