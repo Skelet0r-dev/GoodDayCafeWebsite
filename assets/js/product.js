@@ -19,118 +19,126 @@ document.addEventListener("DOMContentLoaded", function () {
   let cartItems = [];
   let total = 0;
 
-
-
-function applyDiscount(amount) {
-  const el = document.getElementById('userStatus');
-  const status = el ? (el.value || '').trim().toUpperCase() : '';
-  return (status === 'PWD' || status === 'SENIOR') ? amount * 0.9 : amount;
-}
-
-function computeBaseTotal() {
-  return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-}
-
-function updateCartUI() {
-  total = 0;
-  const rowsHTML = [];
-
-  for (let i = 0; i < cartItems.length; i += 2) {
-    const rowItems = cartItems.slice(i, i + 2).map((item, rowIndex) => {
-      total += item.price * item.quantity;
-      return `
-        <div>
-          <p class="list-group-item d-flex justify-content-between align-items-center">
-            ${item.name} (₱${item.price} x ${item.quantity})
-            <span class="remove-item-btn text-danger" style="cursor: pointer;" data-index="${rowIndex + i}">&times;</span>
-          </p>
-        </div>`;
-    }).join("");
-    rowsHTML.push(rowItems);
+  function applyDiscount(amount) {
+    const el = document.getElementById('userStatus');
+    const status = el ? (el.value || '').trim().toUpperCase() : '';
+    return (status === 'PWD' || status === 'SENIOR') ? amount * 0.9 : amount;
   }
 
-  cartItemsElement.innerHTML = rowsHTML.join("");
-
-  const discountedTotal = applyDiscount(total);
-
-  cartTotalElement.textContent = `₱${discountedTotal.toFixed(2)}`;
-  if ('value' in cartTotalElement) cartTotalElement.value = discountedTotal.toFixed(2);
-
-  document.getElementById("cartItemsInput").value = JSON.stringify(cartItems);
-  document.getElementById("totalPriceInput").value = discountedTotal.toFixed(2);
-}
-
-(function () {
-  const form = document.getElementById("checkoutForm");
-  const paymentInput = document.getElementById("paymentAmountInput");
-  const totalPriceInput = document.getElementById("totalPriceInput");
-
-  function cartIsEmpty() {
-    return !Array.isArray(cartItems) || cartItems.length === 0;
-  }
-  function paymentIsEnough() {
-    const discounted = applyDiscount(computeBaseTotal());
-    totalPriceInput.value = discounted.toFixed(2);
-    const pay = parseFloat(paymentInput.value) || 0;
-    const totalDue = parseFloat(totalPriceInput.value) || 0;
-    return pay >= totalDue;
+  function computeBaseTotal() {
+    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
 
-  form.addEventListener("submit", function (e) {
-    // recompute discounted total right before submit
-    const discounted = applyDiscount(computeBaseTotal());
-    totalPriceInput.value = discounted.toFixed(2);
+  function updateCartUI() {
+    total = 0;
+    const rowsHTML = [];
 
-    if (cartIsEmpty()) {
-      e.preventDefault();
-      alert("Your cart is empty. Please add items before checking out.");
-      return;
+    for (let i = 0; i < cartItems.length; i += 2) {
+      const rowItems = cartItems.slice(i, i + 2).map((item, rowIndex) => {
+        total += item.price * item.quantity;
+        return `
+          <div>
+            <p class="list-group-item d-flex justify-content-between align-items-center">
+              ${item.name} (₱${item.price} x ${item.quantity})
+              <span class="remove-item-btn text-danger" style="cursor: pointer;" data-index="${rowIndex + i}">&times;</span>
+            </p>
+          </div>`;
+      }).join("");
+      rowsHTML.push(rowItems);
     }
-    if (!paymentIsEnough()) {
-      e.preventDefault();
-      alert("Payment amount is less than the total price. Please enter enough to cover the total.");
-      paymentInput.focus();
+
+    cartItemsElement.innerHTML = rowsHTML.join("");
+
+    const discountedTotal = applyDiscount(total);
+
+    cartTotalElement.textContent = `₱${discountedTotal.toFixed(2)}`;
+    if ('value' in cartTotalElement) cartTotalElement.value = discountedTotal.toFixed(2);
+
+    // Keep hidden inputs in sync
+    const cartInput = document.getElementById("cartItemsInput");
+    const totalInput = document.getElementById("totalPriceInput");
+    if (cartInput) cartInput.value = JSON.stringify(cartItems);
+    if (totalInput) totalInput.value = discountedTotal.toFixed(2);
+  }
+
+  (function () {
+    const form = document.getElementById("checkoutForm");
+    const paymentInput = document.getElementById("paymentAmountInput");
+    const totalPriceInput = document.getElementById("totalPriceInput");
+
+    function cartIsEmpty() {
+      // Prefer the authoritative hidden input if present
+      const cartInput = document.getElementById("cartItemsInput");
+      if (cartInput && cartInput.value) {
+        try {
+          const arr = JSON.parse(cartInput.value);
+          return !Array.isArray(arr) || arr.length === 0;
+        } catch (e) {
+          return !Array.isArray(cartItems) || cartItems.length === 0;
+        }
+      }
+      return !Array.isArray(cartItems) || cartItems.length === 0;
     }
-  });
-})();
+
+    function paymentIsEnough() {
+      const discounted = applyDiscount(computeBaseTotal());
+      totalPriceInput.value = discounted.toFixed(2);
+      const pay = parseFloat(paymentInput.value) || 0;
+      const totalDue = parseFloat(totalPriceInput.value) || 0;
+      return pay >= totalDue;
+    }
+
+    form.addEventListener("submit", function (e) {
+      // recompute discounted total right before submit
+      const discounted = applyDiscount(computeBaseTotal());
+      totalPriceInput.value = discounted.toFixed(2);
+
+      if (cartIsEmpty()) {
+        e.preventDefault();
+        alert("Your cart is empty. Please add items before checking out.");
+        return;
+      }
+      if (!paymentIsEnough()) {
+        e.preventDefault();
+        alert("Payment amount is less than the total price. Please enter enough to cover the total.");
+        paymentInput.focus();
+      }
+    });
+  })();
 
   // Function to add an item to the cart
-function addToCart(product) {
-  // Step 1: Check if the product already exists in the cart
-  const existingItemIndex = cartItems.findIndex((item) => item.name === product.name);
+  function addToCart(product) {
+    const existingItemIndex = cartItems.findIndex((item) => item.name === product.name);
 
-  if (existingItemIndex !== -1) {
-    // Update the quantity if the product already exists in the cart
-    cartItems[existingItemIndex].quantity += product.quantity;
-  } else {
-    // Add the product as a new item in the cart
-    cartItems.push(product);
+    if (existingItemIndex !== -1) {
+      cartItems[existingItemIndex].quantity += product.quantity;
+    } else {
+      cartItems.push(product);
+    }
+
+    updateCartUI();
+
+    const cartElement = document.querySelector('#cart');
+    if (cartElement) {
+      const cartInstance = bootstrap.Offcanvas.getOrCreateInstance(cartElement);
+      cartInstance.show();
+      console.log("Cart offcanvas opened programmatically after adding a product.");
+    } else {
+      console.error("Cart offcanvas element not found.");
+    }
   }
 
-  // Step 2: Update the cart UI
-  updateCartUI();
-
-
-  // Step 3: Simulate a click on the Cart button to open the cart offcanvas
-const cartElement = document.querySelector('#cart');
-  if (cartElement) {
-    const cartInstance = bootstrap.Offcanvas.getOrCreateInstance(cartElement);
-    cartInstance.show();
-    console.log("Cart offcanvas opened programmatically after adding a product.");
-  } else {
-    console.error("Cart offcanvas element not found.");
-  }
-}    
-
-
-
-  // Function to remove an item from the cart
-  function removeFromCart(index) {
-    cartItems.splice(index, 1); // Remove item from cart array
-    updateCartUI(); // Update UI
-    cartOffcanvas.show(); // Show the cart offcanvas
-  }
-
+  // Remove item handler (delegated)
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.classList.contains("remove-item-btn")) {
+      const idx = parseInt(e.target.getAttribute("data-index"), 10);
+      if (!Number.isNaN(idx)) {
+        cartItems.splice(idx, 1);
+        updateCartUI();
+        cartOffcanvas.show();
+      }
+    }
+  });
 
   // Function to create a product card
   function createProductCard(product) {
@@ -196,8 +204,6 @@ const cartElement = document.querySelector('#cart');
           </div>
         </div>
       </div>
-
-
     `;
 
     let quantity = 1;
@@ -220,13 +226,11 @@ const cartElement = document.querySelector('#cart');
     const addToCartBtn = modal.querySelector(".add-to-cart-modal-btn");
     addToCartBtn.addEventListener("click", () => {
       addToCart({ name: product.PRODUCT_NAME, price: product.PRICE, quantity, id: product.PRODUCT_ID });
-        const bootstrapModal = bootstrap.Modal.getInstance(modal);
-        bootstrapModal.hide();
+      const bootstrapModal = bootstrap.Modal.getInstance(modal);
+      bootstrapModal.hide();
     });
 
-
     modalsContainer.appendChild(modal);
-    
   }
 
   // Process products and categorize cards
@@ -237,91 +241,66 @@ const cartElement = document.querySelector('#cart');
     } else {
       console.warn(`Unknown category: ${product.PRODUCT_CATEGORY}`);
     }
-
-    
   });
-
- 
 });
 
-
+// Nav glow for desktop (ignore non-toggle buttons)
 document.addEventListener("DOMContentLoaded", function () {
-  // Get all nav buttons with the class 'toggle-nav'
   const navButtons = document.querySelectorAll(".toggle-nav");
 
   navButtons.forEach((button) => {
-    // Add click event listener to each button
     button.addEventListener("click", function () {
       const isActive = this.classList.contains("active-glow");
-
-      // Remove the 'active-glow' class from all buttons
       navButtons.forEach((btn) => btn.classList.remove("active-glow"));
-
-      // Toggle the 'active-glow' class on the clicked button
       if (!isActive) {
         this.classList.add("active-glow");
       }
     });
   });
 
-  // Add scroll event listener to remove the active-glow class if scrolling away
   window.addEventListener("scroll", function () {
     navButtons.forEach((btn) => btn.classList.remove("active-glow"));
   });
 });
 
-
+// Cart glow toggle
 document.addEventListener("DOMContentLoaded", function () {
-  // Get all nav buttons with the class 'toggle-nav-cart'
   const navButtons = document.querySelectorAll(".toggle-nav-cart");
 
   navButtons.forEach((button) => {
-    // Add click event listener to each button
     button.addEventListener("click", function () {
-      const offcanvasTarget = this.getAttribute("data-bs-target"); // Get the offcanvas target
-      const offcanvasElement = document.querySelector(offcanvasTarget); // Get the corresponding offcanvas element
+      const offcanvasTarget = this.getAttribute("data-bs-target");
+      const offcanvasElement = document.querySelector(offcanvasTarget);
 
-      // Add event listeners for the offcanvas state
       if (offcanvasElement) {
-        // When the offcanvas is shown
         offcanvasElement.addEventListener("shown.bs.offcanvas", () => {
-          navButtons.forEach((btn) => btn.classList.remove("active-glow")); // Remove glow from all buttons
-          this.classList.add("active-glow"); // Add glow to the clicked button
+          navButtons.forEach((btn) => btn.classList.remove("active-glow"));
+          this.classList.add("active-glow");
         });
 
-        // When the offcanvas is hidden
         offcanvasElement.addEventListener("hidden.bs.offcanvas", () => {
-          this.classList.remove("active-glow"); // Remove glow from the clicked button
+          this.classList.remove("active-glow");
         });
       }
     });
   });
 });
 
-
-
-
+// Offcanvas scroll behavior (disable auto-hide on small screens)
 document.addEventListener("DOMContentLoaded", function () {
-  const offcanvasElement = document.getElementById("cart"); // Your offcanvas element
-  const offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement); // Bootstrap Offcanvas instance
-  const navbarElement = document.querySelector("#navbar"); // Select element with ID "navbar"
-console.log(navbarElement); // Check if element exists
+  const offcanvasElement = document.getElementById("cart");
+  if (!offcanvasElement) return;
+  const offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
+  const navbarElement = document.querySelector("#navbar");
 
-    
-
-  // Function to handle scroll behavior
   function handleScrollHideOffcanvas() {
-    const scrollPosition = window.scrollY; // Current scroll position
-    const navbarHeight = navbarElement.offsetHeight; // Dynamically retrieve navbar height
-
-    // Hide the offcanvas if the scroll position exceeds the navbar height
-    if (scrollPosition < navbarHeight + 400) { // Add additional 100px threshold beyond the navbar
-      offcanvasInstance.hide(); // Hide the offcanvas modal 
+    if (window.innerWidth <= 768) return; // disable auto-hide on small screens
+    const scrollPosition = window.scrollY;
+    const navbarHeight = navbarElement ? navbarElement.offsetHeight : 0;
+    if (scrollPosition < navbarHeight + 400) {
+      offcanvasInstance.hide();
     }
   }
 
-  // Add scroll event listener
   window.addEventListener("scroll", handleScrollHideOffcanvas);
 });
-
-  

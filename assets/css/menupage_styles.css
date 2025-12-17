@@ -238,3 +238,93 @@
 #checkoutButton {
   font-weight: bold;
 }
+
+/* Existing styles ... */
+
+/* Existing styles ... */
+
+/* Match offcanvas mobile nav to navbar look */
+/* Existing styles ... */
+
+/* Match offcanvas mobile nav to navbar look */
+.mobile-nav-body {
+  background: rgb(92, 78, 59);
+}
+.mobile-nav-body .nav-btn {
+  color: #f5f0e9;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.mobile-nav-body .nav-btn:hover,
+.mobile-nav-body .nav-btn:focus {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.mobile-nav-body .offcanvas-title,
+.mobile-nav-body .btn-close {
+  color: #f5f0e9;
+ /* make close icon light on dark bg */
+}
+
+/* General mobile sizing */
+@media (max-width: 576px) {
+  h1.font-playfair.fw-bold { font-size: 42px !important; }
+  h4.font-playfair.fw-bold { font-size: 18px !important; }
+  .carousel-item img { height: 280px !important; }
+  .card .card-body { padding: 0.75rem; }
+  .card-title { font-size: 1rem; }
+  .card-text { font-size: 0.9rem; }
+  .btn.btn-cart { width: 100%; }
+  .card-img-container { height: 160px !important; }
+  /* Reduce section title sizes */
+  #productIcedDrinkRow h1,
+  #productHotDrinkRow h1,
+  #productFrappeRow h1,
+  #productRefresherRow h1,
+  #productPizzaRow h1,
+  #productPastaRow h1,
+  #productPastryRow h1 { font-size: 56px !important; }
+}
+
+/* Offcanvas (cart) mobile friendliness */
+.cart-offcanvas {
+  width: min(100vw, 420px);
+}
+@media (max-width: 576px) {
+  .cart-offcanvas {
+    width: 100vw;
+    max-width: 100vw;
+  }
+  #cart .offcanvas-body {
+    padding: 1rem;
+  }
+  #cart .list-group-item {
+    padding: 0.75rem 0;
+    font-size: 0.95rem;
+  }
+  #cart button.btn-close {
+    width: 2.5rem; height: 2.5rem;
+  }
+  #checkoutForm .form-control {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+  #checkoutForm .btn {
+    padding: 0.85rem;
+    font-size: 1rem;
+  }
+}
+
+/* Offcanvas navbar size */
+#navbarOffcanvas {
+  width: min(80vw, 360px);
+}
+
+/* Card grid tweak for smaller screens */
+@media (max-width: 576px) {
+  .row.g-4 > [class*="col-"] { flex: 0 0 100%; max-width: 100%; }
+}
+@media (min-width: 577px) and (max-width: 768px) {
+  .row.g-4 > [class*="col-"] { flex: 0 0 50%; max-width: 50%; }
+}
