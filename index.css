@@ -201,7 +201,9 @@ body {
   .hero-content .lead {
     font-size: 1rem;
   }
-  .hero-logo {
-    height: 52px;
-  }
+.hero-logo {
+  height:120px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
 }

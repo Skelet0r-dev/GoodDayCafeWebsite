@@ -1,82 +1,168 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap Carousel</title>
-    <link href="\demo\GoodayCafeWebsite-main\assets\css\index.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>   
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Good Day Cafe</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <!-- Custom Styles -->
+    <link href="./assets/css/index.css" rel="stylesheet" />
+    <link href="./assets/css/glassy.css" rel="stylesheet" />
+    <link href="demo\GoodayCafeWebsite-main\assets\css\index.css" rel="stylesheet" />
+    
+
   </head>
   <body>
     <header class="position-absolute top-0 start-0 w-100 z-3">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-transparent px-3 py-2">
+      <nav class="navbar navbar-expand-lg navbar-dark glassy-nav px-3 py-2">
         <div class="container-fluid">
-          <a class="navbar-brand fw-semibold" style="font-family: 'Playfair Display', serif;" href="#">Good Day Cafe</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <a class="navbar-brand fw-semibold brand" href="#">Good Day Cafe</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
             <span class="navbar-toggler-icon"></span>
           </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto gap-4">
-              <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">Menu</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-              <li class="nav-item"><a class="btn btn-warning" href="loginandregis.html" tabindex="-1" aria-disabled="true">Log in</a></li>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto gap-3 align-items-lg-center">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="btn btn-warning fw-semibold px-3" href="loginandregis.html">Log in</a>
+              </li>
             </ul>
-            </div>
+          </div>
         </div>
       </nav>
     </header>
 
-    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="/demo/GoodayCafeWebsite-main/assets/img/carousel index/IMG_0254.jpg" class="d-block w-100" alt="Cozy cafe interior with warm wooden furnishings, ambient lighting, and comfortable seating arranged around small tables. Inviting and welcoming atmosphere.">
-          <div class="overlay"></div>
+    <!-- Hero Carousel -->
+    <section class="hero">
+      <div id="heroCarousel" class="carousel slide h-100" data-bs-ride="carousel">
+        <div class="carousel-inner h-100">
+          <div class="carousel-item active h-100">
+            <img
+              src="./assets/img/carousel index/IMG_0254.jpg"
+              class="d-block w-100 h-100 object-fit-cover"
+              alt="Cozy cafe interior with warm wooden furnishings and ambient lighting."
+            />
+            <div class="overlay"></div>
+          </div>
+          <div class="carousel-item h-100">
+            <img
+              src="./assets/img/carousel index/IMG_0251.jpg"
+              class="d-block w-100 h-100 object-fit-cover"
+              alt="Barista preparing coffee behind the counter."
+            />
+            <div class="overlay"></div>
+          </div>
+          <div class="carousel-item h-100">
+            <img
+              src="./assets/img/carousel index/IMG_0249.jpg"
+              class="d-block w-100 h-100 object-fit-cover"
+              alt="Freshly brewed coffee served on a rustic table."
+            />
+            <div class="overlay"></div>
+          </div>
         </div>
-        <div class="carousel-item">
-          <img src="/demo/GoodayCafeWebsite-main/assets/img/carousel index/IMG_0251.jpg" class="d-block w-100" alt="Slide 2">
-          <div class="overlay"></div>
-        </div>
-        <div class="carousel-item">
-          <img src="/demo/GoodayCafeWebsite-main/assets/img/carousel index/IMG_0249.jpg" class="d-block w-100" alt="Slide 3">
-          <div class="overlay"></div>
+
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#heroCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#heroCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+        <div class="hero-content text-center text-white">
+          <p class="eyebrow mb-2">Crafted with care, served with warmth</p>
+          <div class="d-inline-flex align-items-center justify-content-center gap-3 flex-wrap mb-3 hero-heading">
+            <h1 class="display-4 fw-bold mb-0">Welcome to Good Day Cafe</h1>
+          </div>
+          <p class="lead mb-4">Your cozy corner for the perfect brew</p>
+          <div class="d-flex justify-content-center gap-3">
+            <a class="btn btn-warning px-4 py-2 fw-semibold" href="loginandregis.html">Log in</a>
+            <a class="btn btn-outline-light px-4 py-2" href="https://www.google.com/maps/place/Good+Day+Cafe/@14.3664372,120.9360498,17z/data=!3m1!4b1!4m6!3m5!1s0x3397d5000dfc216d:0x2eae82a0569be0a8!8m2!3d14.366432!4d120.9386247!16s%2Fg%2F11lyr7_hwg?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D">Visit Us</a>
+          </div>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
+    </section>
 
-    <div>
-      <h1 class="text-center text-white position-absolute top-50 start-50 translate-middle fw-bold" style="font-family: 'Playfair Display', serif; font-size: 4rem;">Welcome to Good Day Cafe</h1>
-      <h2 class="text-center text-white position-absolute top-60 start-50 translate-middle-x fw-semibold" style="font-family: 'Montserrat', sans-serif; font-size: 1.5rem; top: 60%; padding-top: 30px;">Your cozy corner for the perfect brew</h2>
-    </div>
-
-
-
-    <div class="container-fluid">
-      <h1>About Us</h1>
-    </div>
-    <div class="container my-5">
-      <div class="row">
-        <div class="col-md-6">
-          <h2 class="fw-bold">About Good Day Cafe</h2>
-          <p>At Good Day Cafe, we believe in creating a warm and inviting atmosphere where you can enjoy your favorite brews and delicious treats. Our cozy corner is designed for relaxation and connection, whether you're catching up with friends or enjoying a quiet moment alone.</p>
-          <p>We source our ingredients from local suppliers to ensure freshness and quality in every cup. Our menu features a variety of coffee, teas, and pastries, all crafted with care and passion.</p>
-        </div>
-        <div class="col-md-6">
-          <img src="/demo/GoodayCafeWebsite-main/assets/img/about-us.jpg" class="img-fluid" alt="About Good Day Cafe">
+    <!-- About Section -->
+    <section id="about" class="py-5 bg-light">
+      <div class="container">
+        <div class="row align-items-center gy-4">
+          <div class="col-md-6">
+            <p class="text-uppercase text-muted fw-semibold mb-2 letterspace-sm">About Us</p>
+            <h2 class="fw-bold mb-3 section-title">Good Day Cafe</h2>
+            <p class="mb-3">
+              At Good Day Cafe, we create a warm, inviting space where you can savor your favorite
+              brews and fresh treats. Whether you're catching up with friends or enjoying a quiet
+              moment, our cozy corner is designed for you.
+            </p>
+            <p class="mb-4">
+              We source locally for freshness and quality, crafting coffee, teas, and pastries with
+              care and passion. Take a seat, slow down, and sip the good life.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge text-bg-dark px-3 py-2">Locally Sourced</span>
+              <span class="badge text-bg-warning px-3 py-2">Freshly Brewed</span>
+              <span class="badge text-bg-secondary px-3 py-2">Cozy Vibes</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="img-card shadow-sm overflow-hidden rounded-4">
+              <img
+                src="\demo\GoodayCafeWebsite-main\assets\img\photo-1453614512568-c4024d13c247.jpg"
+                class="img-fluid w-100"
+                alt="Guests enjoying coffee at Good Day Cafe"
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </section>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

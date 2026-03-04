@@ -428,6 +428,8 @@ while ($productRow = sqlsrv_fetch_array($productsResult)) {
         </div>
     </div>
 
+    
+
 <!-- Add Product Modal -->
 <div class="modal fade" id="add-product-modal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
