@@ -70,12 +70,21 @@
                             </div>
 
                             <!-- Password Input -->
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <div class="d-flex justify-content-between">
                                     <label for="passwordInput" class="form-label small text-uppercase tracking-wide">Password</label>
                                 
                                 </div>
                                 <input type="password" class="form-control form-control-lg form-control-dark" id="passwordInput" name="passwordInput" placeholder="••••••••">
+                            </div>
+
+                            <!-- Remember Me & Forgot Password Row -->
+                            <div class="remember-forgot-row mb-4">
+                                <div class="form-check form-check-dark">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Remember Me</label>
+                                </div>
+                                <a href="#" class="link-light-custom small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">Forgot Password?</a>
                             </div>
 
                             <!-- Submit Button -->
@@ -91,6 +100,41 @@
             </div>
         </div>
         <!-- LOGIN MODAL END -->
+
+          <!-- FORGOT PASSWORD MODAL START -->
+        <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+
+                <!-- Dark Modal Content -->
+                <div class="modal-content modal-content-dark">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header modal-header-dark">
+                        <h3 class="modal-title font-playfair fw-bold">Forgot Password</h3>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body p-4">
+                        <p class="text-secondary small mb-4">Enter your email address and we'll send you a link to reset your password.</p>
+                        <form method="post" action="forgot_password.php">
+                            <!-- Email Input -->
+                            <div class="mb-4">
+                                <label for="resetEmail" class="form-label small text-uppercase tracking-wide">Email Address</label>
+                                <input type="email" class="form-control form-control-lg form-control-dark" id="resetEmail" name="resetEmail" placeholder="name@example.com" required>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-light btn-lg font-playfair fw-bold">Send Reset Link</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- FORGOT PASSWORD MODAL END -->
 
           <!-- REGIS MODAL START -->
         <div class="modal fade" id="regisModal" tabindex="-1" aria-hidden="true">
