@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $serverName = "ANGELO\\SQLEXPRESS";
 $connectionOptions = [
@@ -44,13 +45,17 @@ if ($rowpass == null) {
               </script>");
 
 }else if ($rowpass['STATUS'] == "STAFF"){
-    session_start();
+    if (isset($_POST['rememberMe'])) {
+        setcookie("rememberEmail", $email, time() + (86400 * 30), "/", "", false, true);
+    }
     $_SESSION['fname'] = $rowpass['FIRSTNAME'];
     $_SESSION['lname'] = $rowpass['LASTNAME'];
     header("Location: admin\adminpage.php");
     exit;
 }else{
-    session_start();
+    if (isset($_POST['rememberMe'])) {
+        setcookie("rememberEmail", $email, time() + (86400 * 30), "/", "", false, true);
+    }
     $_SESSION['user_id'] = $rowpass['USER_ID'];
     $_SESSION['fname'] = $rowpass['FIRSTNAME'];
     $_SESSION['lname'] = $rowpass['LASTNAME'];
