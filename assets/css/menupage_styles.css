@@ -275,7 +275,7 @@
   .card .card-body { padding: 0.75rem; }
   .card-title { font-size: 1rem; }
   .card-text { font-size: 0.9rem; }
-  .btn.btn-cart { width: 100%; }
+  .btn.btn-cart { width: 100%; min-height: 44px; }
   .card-img-container { height: 160px !important; }
   /* Reduce section title sizes */
   #productIcedDrinkRow h1,
@@ -284,7 +284,7 @@
   #productRefresherRow h1,
   #productPizzaRow h1,
   #productPastaRow h1,
-  #productPastryRow h1 { font-size: 56px !important; }
+  #productPastryRow h1 { font-size: 2rem !important; }
 }
 
 /* Offcanvas (cart) mobile friendliness */
@@ -327,4 +327,29 @@
 }
 @media (min-width: 577px) and (max-width: 768px) {
   .row.g-4 > [class*="col-"] { flex: 0 0 50%; max-width: 50%; }
+}
+
+/* Touch-friendly nav buttons */
+.nav-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Touch-friendly quantity and cart buttons */
+.quantity-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Tablet breakpoint for section titles */
+@media (min-width: 577px) and (max-width: 768px) {
+  #productIcedDrinkRow h1,
+  #productHotDrinkRow h1,
+  #productFrappeRow h1,
+  #productRefresherRow h1,
+  #productPizzaRow h1,
+  #productPastaRow h1,
+  #productPastryRow h1 { font-size: 3rem !important; }
 }

@@ -66,6 +66,81 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+    <style>
+      /* Mobile responsive overrides for menu page */
+      @media (max-width: 767.98px) {
+        .carousel-item img {
+          height: 250px !important;
+        }
+        .container.text-center h1.font-playfair {
+          font-size: 2.5rem !important;
+        }
+        .container.text-center h4.font-playfair {
+          font-size: 1.1rem !important;
+        }
+        .container.text-center .lead {
+          font-size: 0.95rem;
+        }
+        #productIcedDrinkRow h1,
+        #productHotDrinkRow h1,
+        #productFrappeRow h1,
+        #productRefresherRow h1,
+        #productPizzaRow h1,
+        #productPastaRow h1,
+        #productPastryRow h1 {
+          font-size: 2.5rem !important;
+        }
+        .gooddaylogoccarosel-img {
+          height: 250px !important;
+          transform: none;
+        }
+        .carousel-caption h3 {
+          font-size: 1.1rem;
+        }
+        .carousel-caption p {
+          font-size: 0.85rem;
+        }
+      }
+      @media (max-width: 575.98px) {
+        .carousel-item img {
+          height: 200px !important;
+        }
+        .container.text-center h1.font-playfair {
+          font-size: 2rem !important;
+        }
+        #productIcedDrinkRow h1,
+        #productHotDrinkRow h1,
+        #productFrappeRow h1,
+        #productRefresherRow h1,
+        #productPizzaRow h1,
+        #productPastaRow h1,
+        #productPastryRow h1 {
+          font-size: 1.75rem !important;
+        }
+        .card-img-container {
+          height: 140px !important;
+        }
+        .quantity-btn {
+          width: 44px;
+          height: 44px;
+        }
+        #checkoutForm .btn {
+          min-height: 48px;
+        }
+        #paymentAmountInput {
+          min-height: 48px;
+        }
+      }
+      /* Prevent horizontal scrolling */
+      html, body {
+        overflow-x: hidden;
+      }
+      /* Responsive images */
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
   </head>
 
   <header>

@@ -92,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Receipt</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <style>
@@ -105,6 +106,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .items .row { display: flex; justify-content: space-between; margin: 4px 0; }
     .hr { border: 0; border-top: 1px solid #ddd; margin: 16px 0; }
     .strong { font-weight: 700; }
+    @media (max-width: 575.98px) {
+      body { padding: 12px; }
+      .receipt { padding: 16px; }
+      .receipt h1 { font-size: 20px; }
+      .meta .container h1.strong { font-size: 1.25rem !important; }
+      .d-flex.justify-content-center.gap-3 { flex-direction: column; }
+      .d-flex.justify-content-center.gap-3 .btn { width: 100%; min-height: 48px; }
+    }
+    /* Prevent horizontal overflow */
+    html, body { overflow-x: hidden; }
   </style>
 </head>
 <body>
