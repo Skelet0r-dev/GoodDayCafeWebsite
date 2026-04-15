@@ -239,13 +239,6 @@
   font-weight: bold;
 }
 
-/* Existing styles ... */
-
-/* Existing styles ... */
-
-/* Match offcanvas mobile nav to navbar look */
-/* Existing styles ... */
-
 /* Match offcanvas mobile nav to navbar look */
 .mobile-nav-body {
   background: rgb(92, 78, 59);
@@ -267,34 +260,107 @@
  /* make close icon light on dark bg */
 }
 
-/* General mobile sizing */
+/* Prevent image overflow in content areas */
+.container img,
+.card img,
+.carousel img,
+.offcanvas img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Offcanvas (cart) base – responsive width */
+.cart-offcanvas {
+  width: min(100vw, 420px);
+}
+
+/* Offcanvas navbar size */
+#navbarOffcanvas {
+  width: min(86vw, 360px);
+}
+
+/* ===== Phone (320px – 576px) ===== */
 @media (max-width: 576px) {
-  h1.font-playfair.fw-bold { font-size: 42px !important; }
-  h4.font-playfair.fw-bold { font-size: 18px !important; }
-  .carousel-item img { height: 280px !important; }
-  .card .card-body { padding: 0.75rem; }
-  .card-title { font-size: 1rem; }
-  .card-text { font-size: 0.9rem; }
-  .btn.btn-cart { width: 100%; }
-  .card-img-container { height: 160px !important; }
-  /* Reduce section title sizes */
+
+  /* Prevent horizontal overflow */
+  body,
+  html {
+    overflow-x: hidden;
+  }
+
+  /* Hero / carousel */
+  .carousel-item img {
+    height: 220px !important;
+    object-fit: cover;
+  }
+
+  /* Page heading */
+  h1.font-playfair.fw-bold {
+    font-size: 2rem !important;
+    line-height: 1.15;
+  }
+  h4.font-playfair.fw-bold {
+    font-size: 1.05rem !important;
+  }
+  .lead {
+    font-size: 0.95rem;
+  }
+
+  /* Category section titles (inline 100px overridden) */
   #productIcedDrinkRow h1,
   #productHotDrinkRow h1,
   #productFrappeRow h1,
   #productRefresherRow h1,
   #productPizzaRow h1,
   #productPastaRow h1,
-  #productPastryRow h1 { font-size: 56px !important; }
-}
+  #productPastryRow h1 {
+    font-size: 2.25rem !important;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
 
-/* Offcanvas (cart) mobile friendliness */
-.cart-offcanvas {
-  width: min(100vw, 420px);
-}
-@media (max-width: 576px) {
+  /* Product cards */
+  .card .card-body {
+    padding: 0.85rem;
+  }
+  .card-title {
+    font-size: 1rem;
+  }
+  .card-text {
+    font-size: 0.92rem;
+  }
+  .card-img-container {
+    height: 160px !important;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.28);
+  }
+
+  /* Full-width cart button on phones */
+  .btn.btn-cart {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Touch-friendly quantity controls (>= 44px) */
+  .quantity-selector {
+    gap: 10px;
+    padding: 8px 10px;
+  }
+  .quantity-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    border-radius: 10px;
+  }
+
+  /* Cart offcanvas – full width on phones */
   .cart-offcanvas {
     width: 100vw;
     max-width: 100vw;
+    margin-top: 0;
+    height: 100vh;
+    top: 0;
+    border-radius: 0;
   }
   #cart .offcanvas-body {
     padding: 1rem;
@@ -304,27 +370,81 @@
     font-size: 0.95rem;
   }
   #cart button.btn-close {
-    width: 2.5rem; height: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
   }
   #checkoutForm .form-control {
     font-size: 1rem;
     padding: 0.75rem;
+    min-height: 44px;
   }
   #checkoutForm .btn {
     padding: 0.85rem;
     font-size: 1rem;
+    min-height: 44px;
+  }
+
+  /* Mobile nav offcanvas */
+  #navbarOffcanvas {
+    width: min(86vw, 360px);
+  }
+  .mobile-nav-body .nav-btn {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    min-height: 44px;
+  }
+
+  /* Force single column grid on phones */
+  .row.g-4 > [class*="col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* Tighten container padding */
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* Navbar bar - reduce padding on small screens */
+  #navbar .container {
+    border-radius: 20px;
+    padding: 0.5rem 0.75rem !important;
   }
 }
 
-/* Offcanvas navbar size */
-#navbarOffcanvas {
-  width: min(80vw, 360px);
-}
-
-/* Card grid tweak for smaller screens */
-@media (max-width: 576px) {
-  .row.g-4 > [class*="col-"] { flex: 0 0 100%; max-width: 100%; }
-}
+/* ===== Small tablets (577px – 768px) ===== */
 @media (min-width: 577px) and (max-width: 768px) {
-  .row.g-4 > [class*="col-"] { flex: 0 0 50%; max-width: 50%; }
+
+  /* 2-column grid */
+  .row.g-4 > [class*="col-"] {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* Scale section titles down from inline 100px */
+  #productIcedDrinkRow h1,
+  #productHotDrinkRow h1,
+  #productFrappeRow h1,
+  #productRefresherRow h1,
+  #productPizzaRow h1,
+  #productPastaRow h1,
+  #productPastryRow h1 {
+    font-size: 3rem !important;
+  }
+
+  /* Carousel images */
+  .carousel-item img {
+    height: 350px !important;
+    object-fit: cover;
+  }
+
+  /* Cart offcanvas */
+  .cart-offcanvas {
+    width: min(100vw, 420px);
+    margin-top: 0;
+    height: 100vh;
+    top: 0;
+    border-radius: 0;
+  }
 }
