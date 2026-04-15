@@ -194,14 +194,106 @@ body {
 @media (max-width: 767.98px) {
   .hero {
     height: 75vh;
+    min-height: 400px;
   }
   .hero-content h1 {
-    font-size: 2.25rem;
+    font-size: 1.75rem;
   }
   .hero-content .lead {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   .hero-logo {
     height: 52px;
+  }
+  .eyebrow {
+    font-size: 0.75rem;
+  }
+  .hero-content .d-flex {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+  .hero-content .btn {
+    width: 100%;
+    min-height: 44px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .hero {
+    height: 70vh;
+    min-height: 360px;
+  }
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+  .hero-content .lead {
+    font-size: 0.9rem;
+    margin-bottom: 1rem !important;
+  }
+  .hero-content {
+    padding: 0 1rem;
+  }
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Touch-friendly buttons */
+.btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Prevent horizontal overflow */
+html, body {
+  overflow-x: hidden;
+}
+
+/* About section mobile */
+@media (max-width: 767.98px) {
+  #about {
+    padding: 2.5rem 0 !important;
+  }
+  #about .section-title {
+    font-size: 1.75rem;
+  }
+  #about p {
+    font-size: 0.95rem;
+  }
+  .img-card {
+    margin-top: 1rem;
+  }
+}
+
+/* Glassy nav mobile */
+@media (max-width: 991.98px) {
+  .glassy-nav {
+    padding: 0.5rem 0.75rem;
+  }
+  .navbar-collapse {
+    backdrop-filter: blur(14px);
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  .navbar-nav {
+    gap: 0.25rem !important;
+  }
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .navbar-nav .btn {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 }
