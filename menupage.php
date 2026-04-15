@@ -121,8 +121,8 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
   <div style="padding-top: 30px;">
     <div class="container text-center py-4 mb-1">
-      <h1 class="font-playfair fw-bold" style="font-size: 75px;">Our Menu</h1>
-      <h4 class="font-playfair fw-bold" style="font-size: 25px;">Welcome, <?php echo htmlspecialchars($firstName . ' ' . $lastName); ?>!</h4>
+      <h1 class="font-playfair fw-bold menu-page-title">Our Menu</h1>
+      <h4 class="font-playfair fw-bold menu-page-subtitle">Welcome, <?php echo htmlspecialchars($firstName . ' ' . $lastName); ?>!</h4>
       <p class="lead" style="padding-top: 20px;">Explore our delicious offerings below!</p>
     </div>
   </div>
@@ -208,7 +208,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Iced Drinks</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Iced Drinks</h1>
                 <p>Check out some of our popular Iced Drinks items!</p>
               </div>
               <div class="row g-4 iced-drinks-container"></div>
@@ -221,7 +221,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Hot Drinks</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Hot Drinks</h1>
                 <p>Check out some of our popular Hot Drinks items!</p>
               </div>
               <div class="row g-4 hot-drinks-container"></div>
@@ -234,7 +234,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Frappe's</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Frappe's</h1>
                 <p>Check out some of our popular Frappe's items!</p>
               </div>
               <div class="row g-4 frappe-drinks-container"></div>
@@ -247,7 +247,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Refresher's</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Refresher's</h1>
                 <p>Check out some of our popular Refresher's items!</p>
               </div>
               <div class="row g-4 refresher-drinks-container"></div>
@@ -260,7 +260,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pizza</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Pizza</h1>
                 <p>Check out some of our popular Pizza items!</p>
               </div>
               <div class="row g-4 pizza-container"></div>
@@ -273,7 +273,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pasta</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Pasta</h1>
                 <p>Check out some of our popular Pasta items!</p>
               </div>
               <div class="row g-4 pasta-container"></div>
@@ -286,7 +286,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           <div style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pastries</h1>
+                <h1 class="font-playfair fw-bold menu-section-title">Pastries</h1>
                 <p>Check out some of our popular Pastries items!</p>
               </div>
               <div class="row g-4 pastries-container"></div>
