@@ -119,7 +119,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
     </div>
   </header>
 
-  <div style="padding-top: 30px;">
+  <div class="menu-header-spacing" style="padding-top: 30px;">
     <div class="container text-center py-4 mb-1">
       <h1 class="font-playfair fw-bold menu-page-title">Our Menu</h1>
       <h4 class="font-playfair fw-bold menu-page-subtitle">Welcome, <?php echo htmlspecialchars($firstName . ' ' . $lastName); ?>!</h4>
@@ -205,7 +205,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Iced Drinks Section -->
         <div class="row g-4" id="productIcedDrinkRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Iced Drinks</h1>
@@ -218,7 +218,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Hot Drinks Section -->
         <div class="row g-4" id="productHotDrinkRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Hot Drinks</h1>
@@ -231,7 +231,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Frappe Section -->
         <div class="row g-4" id="productFrappeRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Frappe's</h1>
@@ -244,7 +244,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Refresher Section -->
         <div class="row g-4" id="productRefresherRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Refresher's</h1>
@@ -257,7 +257,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Pizza Section -->
         <div class="row g-4" id="productPizzaRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Pizza</h1>
@@ -270,7 +270,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Pasta Section -->
         <div class="row g-4" id="productPastaRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Pasta</h1>
@@ -283,7 +283,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
 
         <!-- Pastries Section -->
         <div class="row g-4" id="productPastryRow">
-          <div style="padding-top: 20px;">
+          <div class="menu-section-spacing" style="padding-top: 20px;">
             <div class="container-fluid">
               <div class="container text-start">
                 <h1 class="font-playfair fw-bold menu-section-title">Pastries</h1>

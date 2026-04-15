@@ -300,21 +300,12 @@ html, body {
   /* Page heading */
   .menu-page-title { font-size: 48px !important; }
   .menu-page-subtitle { font-size: 20px !important; }
-  h1.font-playfair.fw-bold { font-size: 48px !important; }
-  h4.font-playfair.fw-bold { font-size: 20px !important; }
 
   /* Carousel */
   .carousel-item img { height: 340px !important; }
 
   /* Section titles */
-  .menu-section-title,
-  #productIcedDrinkRow h1,
-  #productHotDrinkRow h1,
-  #productFrappeRow h1,
-  #productRefresherRow h1,
-  #productPizzaRow h1,
-  #productPastaRow h1,
-  #productPastryRow h1 { font-size: 64px !important; }
+  .menu-section-title { font-size: 64px !important; }
 
   /* Cards */
   .card .card-body { padding: 0.85rem; }
@@ -348,21 +339,12 @@ html, body {
   /* Page heading */
   .menu-page-title { font-size: 36px !important; }
   .menu-page-subtitle { font-size: 16px !important; }
-  h1.font-playfair.fw-bold { font-size: 36px !important; }
-  h4.font-playfair.fw-bold { font-size: 16px !important; }
 
   /* Carousel */
   .carousel-item img { height: 220px !important; }
 
   /* Section titles */
-  .menu-section-title,
-  #productIcedDrinkRow h1,
-  #productHotDrinkRow h1,
-  #productFrappeRow h1,
-  #productRefresherRow h1,
-  #productPizzaRow h1,
-  #productPastaRow h1,
-  #productPastryRow h1 { font-size: 40px !important; }
+  .menu-section-title { font-size: 40px !important; }
 
   /* Cards */
   .card .card-body { padding: 0.75rem; }
@@ -402,26 +384,17 @@ html, body {
   #checkoutForm .btn { padding: 0.85rem; font-size: 1rem; }
 
   /* Section spacing */
-  .row.g-4 > div > div[style*="padding-top"] { padding-top: 12px !important; }
-  div[style*="padding-top: 30px"] { padding-top: 16px !important; }
+  .menu-section-spacing { padding-top: 12px !important; }
+  .menu-header-spacing { padding-top: 16px !important; }
 }
 
 /* ===== Tiny phones: ≤375px ===== */
 @media (max-width: 375px) {
   .menu-page-title { font-size: 30px !important; }
   .menu-page-subtitle { font-size: 15px !important; }
-  h1.font-playfair.fw-bold { font-size: 30px !important; }
-  h4.font-playfair.fw-bold { font-size: 15px !important; }
   .carousel-item img { height: 180px !important; }
 
-  .menu-section-title,
-  #productIcedDrinkRow h1,
-  #productHotDrinkRow h1,
-  #productFrappeRow h1,
-  #productRefresherRow h1,
-  #productPizzaRow h1,
-  #productPastaRow h1,
-  #productPastryRow h1 { font-size: 32px !important; }
+  .menu-section-title { font-size: 32px !important; }
 
   .card-img-container { height: 140px !important; }
 }
@@ -430,7 +403,6 @@ html, body {
 .card-img-container img,
 .carousel-item img {
   max-width: 100%;
-  height: auto;
 }
 
 /* Ensure no content overflows on mobile */
