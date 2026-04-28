@@ -52,6 +52,7 @@ while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
     }
     $products[] = $row;
 }
+
 ?>
 <!doctype html>
 <html lang="en">
