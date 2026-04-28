@@ -15,7 +15,7 @@ if (!$product_name || !$product_price || !$product_description || !$product_cate
 
 // Insert product into the database
 $insertProductStmt = $conn->prepare(
-    "INSERT INTO products (PRODUCT_NAME, PRICE, DESCRIPTION, PRODUCT_CATEGORY)
+    "INSERT INTO products (product_name, price, description, product_category)
      VALUES (?, ?, ?, ?)"
 );
 
@@ -49,7 +49,7 @@ if (!move_uploaded_file($image['tmp_name'], $targetImagePath)) {
 
 // Insert image data into the database
 $insertImageStmt = $conn->prepare(
-    "INSERT INTO product_image (IMAGE_NAME, FILEPATH, PRODUCT_ID)
+    "INSERT INTO product_image (image_name, filepath, product_id)
      VALUES (?, ?, ?)"
 );
 

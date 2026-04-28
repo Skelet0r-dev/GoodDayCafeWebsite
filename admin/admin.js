@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
                 background-color: rgb(237, 223, 203);
             ">
-                <img src="${product.FILEPATH}" alt="${product.PRODUCT_NAME}" class="card-img-top" style="
+                <img src="${product.filepath}" alt="${product.product_name}" class="card-img-top" style="
                     padding-top: 10px;
                     width: 100%;
                     height: 100%;
@@ -34,11 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 ">
             </div>
             <div class="card-body d-flex flex-column py-4">
-                <h5 class="card-title beige-custom">${product.PRODUCT_NAME}</h5>
-                <p class="card-text beige-custom">${product.DESCRIPTION}</p>
+                <h5 class="card-title beige-custom">${product.product_name}</h5>
+                <p class="card-text beige-custom">${product.description}</p>
                 <div class="mt-auto d-flex gap-2 justify-content-center">
                     <!-- Add to Cart Button -->
-                    <button type="button" class="btn btn-cart" data-bs-toggle="modal" data-bs-target="#modal-${product.PRODUCT_ID}">
+                    <button type="button" class="btn btn-cart" data-bs-toggle="modal" data-bs-target="#modal-${product.product_id}">
                         Add to Cart <i class="bi bi-cart-fill"></i>
                     </button>
                 </div>
@@ -53,15 +53,15 @@ document.addEventListener("DOMContentLoaded", function () {
             font-weight: bold;
         ">
 
-            Remove ${product.PRODUCT_NAME}
+            Remove ${product.product_name}
         </button>
     `;
 
     // Add event listener to Remove Button
     const removeBtn = cardContainer.querySelector(".btn-remove");
     removeBtn.addEventListener("click", () => {
-        if (confirm(`Are you sure you want to delete ${product.PRODUCT_NAME}?`)) {
-            deleteProduct(product.PRODUCT_ID, cardContainer);
+        if (confirm(`Are you sure you want to delete ${product.product_name}?`)) {
+            deleteProduct(product.product_id, cardContainer);
         }
     });
 
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to create the modal for a product
     function createProductModal(product) {
-        const modalId = `modal-${product.PRODUCT_ID}`;
+        const modalId = `modal-${product.product_id}`;
 
         const modal = document.createElement("div");
         modal.className = "modal fade";
@@ -87,17 +87,17 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">${product.PRODUCT_NAME}</h5>
+                        <h5 class="modal-title">${product.product_name}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="text-center">
-                            <img src="${product.FILEPATH}" alt="${product.PRODUCT_NAME}" style="width: 100%; height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 20px;">
+                            <img src="${product.filepath}" alt="${product.product_name}" style="width: 100%; height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 20px;">
                         </div>
 
                     <div class="container justify-content-center d-flex flex-column align-items-center">
-                        <p><strong>Description:</strong> ${product.DESCRIPTION}</p>
-                        <p><strong>Price:</strong> ₱${product.PRICE}</p>
+                        <p><strong>Description:</strong> ${product.description}</p>
+                        <p><strong>Price:</strong> ₱${product.price}</p>
                         
                         <div class="quantity-selector">
                             <button type="button" class="quantity-btn decrement-btn">-</button>
@@ -160,22 +160,22 @@ document.addEventListener("DOMContentLoaded", function () {
     products.forEach((product) => {
         const card = createProductCard(product);
 
-        if (product.PRODUCT_CATEGORY === "Iced Drink") {
+        if (product.product_category === "Iced Drink") {
             icedDrinksContainer.appendChild(card); // Add to Iced Drinks Row
-        } else if (product.PRODUCT_CATEGORY === "Hot Drink") {
+        } else if (product.product_category === "Hot Drink") {
             hotDrinksContainer.appendChild(card); // Add to Hot Drinks Row
-        } else if (product.PRODUCT_CATEGORY === "Frappe") {
+        } else if (product.product_category === "Frappe") {
             frappeDrinksContainer.appendChild(card); // Add to Frappe's Row
-        } else if (product.PRODUCT_CATEGORY === "Pastry") {
+        } else if (product.product_category === "Pastry") {
             pastriesContainer.appendChild(card); // Add to Pastry's Row
-        } else if (product.PRODUCT_CATEGORY === "Pasta") {
+        } else if (product.product_category === "Pasta") {
             pastaContainer .appendChild(card); // Add to Pasta's Row
-        } else if (product.PRODUCT_CATEGORY === "Pizza") {
+        } else if (product.product_category === "Pizza") {
             pizzaContainer.appendChild(card); // Add to Pizza's Row
-        } else if (product.PRODUCT_CATEGORY === "Refresher") {
+        } else if (product.product_category === "Refresher") {
             refresherDrinksContainer.appendChild(card); // Add to Refresher's Row
         } else {
-            console.warn(`Unknown category: ${product.PRODUCT_CATEGORY}`);
+            console.warn(`Unknown category: ${product.product_category}`);
         }
     });
 });
