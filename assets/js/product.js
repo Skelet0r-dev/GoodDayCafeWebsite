@@ -148,12 +148,12 @@ document.addEventListener("DOMContentLoaded", function () {
     cardContainer.innerHTML = `
       <div class="card text-center" style="background-color: rgb(92, 78, 59);">
         <div class="card-img-container beige-custom" style="height: 200px; overflow: hidden; background-color: rgb(237, 223, 203);">
-          <img src="${product.FILEPATH}" alt="${product.PRODUCT_NAME}" class="card-img-top" style="width: 100%; height: 100%; object-fit: contain;">
+          <img src="${product.filepath}" alt="${product.product_name}" class="card-img-top" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="card-body">
-          <h5 class="card-title beige-custom">${product.PRODUCT_NAME}</h5>
-          <p class="card-text beige-custom">${product.DESCRIPTION}</p>
-          <button type="button" class="btn btn-cart" data-bs-toggle="modal" data-bs-target="#modal-${product.PRODUCT_ID}">
+          <h5 class="card-title beige-custom">${product.product_name}</h5>
+          <p class="card-text beige-custom">${product.description}</p>
+          <button type="button" class="btn btn-cart" data-bs-toggle="modal" data-bs-target="#modal-${product.product_id}">
             Add to Cart <i class="bi bi-cart-fill"></i>
           </button>
         </div>
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function createProductModal(product) {
     const modal = document.createElement("div");
     modal.className = "modal fade";
-    modal.id = `modal-${product.PRODUCT_ID}`;
+    modal.id = `modal-${product.product_id}`;
     modal.setAttribute("tabindex", "-1");
     modal.setAttribute("aria-hidden", "true");
 
@@ -176,15 +176,15 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">${product.PRODUCT_NAME}</h5>
+            <h5 class="modal-title">${product.product_name}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="text-center">
-              <img src="${product.FILEPATH}" alt="${product.PRODUCT_NAME}" class="w-100 mb-3" style="height: 300px; object-fit: contain; border-radius: 8px;">
+              <img src="${product.filepath}" alt="${product.product_name}" class="w-100 mb-3" style="height: 300px; object-fit: contain; border-radius: 8px;">
             </div>
-            <p><strong>Description:</strong> ${product.DESCRIPTION}</p>
-            <p><strong>Price:</strong> ₱${product.PRICE}</p>
+            <p><strong>Description:</strong> ${product.description}</p>
+            <p><strong>Price:</strong> ₱${product.price}</p>
 
             <div class="quantity-selector d-flex align-items-center gap-3 justify-content-center mt-3">
               <button type="button" class="quantity-btn decrement-btn btn btn-outline-secondary">-</button>
@@ -196,9 +196,9 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary add-to-cart-modal-btn" 
-              data-product-id="${product.PRODUCT_ID}"
-              data-product-name="${product.PRODUCT_NAME}" 
-              data-product-price="${product.PRICE}">
+              data-product-id="${product.product_id}"
+              data-product-name="${product.product_name}" 
+              data-product-price="${product.price}">
               Add to Cart
             </button>
           </div>
@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const addToCartBtn = modal.querySelector(".add-to-cart-modal-btn");
     addToCartBtn.addEventListener("click", () => {
-      addToCart({ name: product.PRODUCT_NAME, price: product.PRICE, quantity, id: product.PRODUCT_ID });
+      addToCart({ name: product.product_name, price: product.price, quantity, id: product.product_id });
       const bootstrapModal = bootstrap.Modal.getInstance(modal);
       bootstrapModal.hide();
     });
@@ -235,11 +235,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Process products and categorize cards
   products.forEach((product) => {
-    if (categoryContainers[product.PRODUCT_CATEGORY]) {
+    if (categoryContainers[product.product_category]) {
       const card = createProductCard(product);
-      categoryContainers[product.PRODUCT_CATEGORY].appendChild(card);
+      categoryContainers[product.product_category].appendChild(card);
     } else {
-      console.warn(`Unknown category: ${product.PRODUCT_CATEGORY}`);
+      console.warn(`Unknown category: ${product.product_category}`);
     }
   });
 });

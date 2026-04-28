@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Insert ORDER
         $sqlOrderInsert = "
-            INSERT INTO `order` (USER_ID, TOTAL_PRICE, ORDER_PLACED, PAYMENT, STATUS, POSITION)
+            INSERT INTO `order` (user_id, total_price, order_placed, payment, status, position)
             VALUES (?, ?, ?, ?, ?, ?)
         ";
         $stmtOrder = $conn->prepare($sqlOrderInsert);
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insert ORDER_ITEM rows
         $sqlItemInsert = "
-            INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE)
+            INSERT INTO order_item (order_id, product_id, product_name, quantity, price)
             VALUES (?, ?, ?, ?, ?)
         ";
         $stmtItem = $conn->prepare($sqlItemInsert);
