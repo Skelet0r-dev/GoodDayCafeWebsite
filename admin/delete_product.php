@@ -1,16 +1,5 @@
 <?php
-$serverName = "ANGELO\\SQLEXPRESS";
-$connectionOptions = [
-    "Database" => "Good_Day_Cafe",
-    "Uid" => "",
-    "PWD" => "",
-];
-
-$conn = sqlsrv_connect($serverName, $connectionOptions);
-if ($conn === false) {
-    error_log(print_r(sqlsrv_errors(), true));
-    die(json_encode(['success' => false, 'message' => 'Database connection failed.']));
-}
+require_once __DIR__ . '/../db_config.php';
 
 // Get the product ID from POST
 $productId = intval($_POST['product_id'] ?? 0);
@@ -20,26 +9,21 @@ if ($productId <= 0) {
 }
 
 // Get the image path
-$getImageQuery = "SELECT FILEPATH FROM PRODUCT_IMAGE WHERE PRODUCT_ID = ?";
-$params = [$productId];
-$result = sqlsrv_query($conn, $getImageQuery, $params);
-
-if ($result === false) {
-    error_log(print_r(sqlsrv_errors(), true));
-    die(json_encode(['success' => false, 'message' => 'Failed to retrieve image path.']));
-}
-
-$row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+$stmt = $conn->prepare("SELECT FILEPATH FROM product_image WHERE PRODUCT_ID = ?");
+$stmt->execute([$productId]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 $imagePath = $row['FILEPATH'] ?? null;
 
 // Delete image record from database
-$deleteImageQuery = "DELETE FROM PRODUCT_IMAGE WHERE PRODUCT_ID = ?";
-sqlsrv_query($conn, $deleteImageQuery, [$productId]);
+$conn->prepare("DELETE FROM product_image WHERE PRODUCT_ID = ?")
+     ->execute([$productId]);
 
 // Delete product record
-$deleteProductQuery = "DELETE FROM PRODUCTS WHERE PRODUCT_ID = ?";
-if (sqlsrv_query($conn, $deleteProductQuery, [$productId]) === false) {
-    error_log(print_r(sqlsrv_errors(), true));
+try {
+    $conn->prepare("DELETE FROM products WHERE PRODUCT_ID = ?")
+         ->execute([$productId]);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
     die(json_encode(['success' => false, 'message' => 'Failed to delete product.']));
 }
 

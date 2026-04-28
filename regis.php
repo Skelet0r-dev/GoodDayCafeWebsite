@@ -1,46 +1,38 @@
-<?php 
-$serverName = "ANGELO\\SQLEXPRESS";
+<?php
+require_once __DIR__ . '/db_config.php';
 
-$connectionOptions = [
-    "Database" => "Good_Day_Cafe",
-    "TrustServerCertificate" => true
-];
-
-$conn =sqlsrv_connect($serverName, $connectionOptions); 
-if($conn==false) 
-die(print_r(sqlsrv_errors(),true)); 
-else echo 'Connection Success'; 
-
-$fname = $_POST['fname'];
-$lname = $_POST['lname'];
-$bday = $_POST['bday'];
+$fname    = $_POST['fname'];
+$lname    = $_POST['lname'];
+$bday     = $_POST['bday'];
 $emailReg = $_POST['emailReg'];
-$status =  $_POST['statusReg'];
-$passReg = $_POST['passReg'];
+$status   = $_POST['statusReg'];
+$passReg  = $_POST['passReg'];
 
-$checksql = "SELECT EMAIL FROM USERS WHERE EMAIL = '$emailReg'";
-$checksqlResult = sqlsrv_query($conn, $checksql);
-$emailcheck = sqlsrv_fetch_array($checksqlResult);
+// Check if email is already taken
+$checkStmt = $conn->prepare("SELECT EMAIL FROM users WHERE EMAIL = ?");
+$checkStmt->execute([$emailReg]);
+$emailcheck = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-if ($emailcheck==true){
-     echo "<script>
+if ($emailcheck !== false) {
+    echo "<script>
                 alert('Email Already Taken');
                 window.location.href='loginandregis.html';
               </script>";
-        exit;
-}else{
-$sqlinsert = "INSERT INTO USERS ([FIRSTNAME], [LASTNAME], [DATEOFBIRTH], [EMAIL], [PASS], [STATUS])
-      VALUES ('$fname', '$lname','$bday', '$emailReg','$passReg', '$status')";
+    exit;
+} else {
+    $insertStmt = $conn->prepare(
+        "INSERT INTO users (FIRSTNAME, LASTNAME, DATEOFBIRTH, EMAIL, PASS, STATUS)
+         VALUES (?, ?, ?, ?, ?, ?)"
+    );
+    $result = $insertStmt->execute([$fname, $lname, $bday, $emailReg, $passReg, $status]);
 
-$sqlresult = sqlsrv_query($conn,$sqlinsert);
-
-if($sqlresult==true){
-    echo "<script>
-                alert('Registration Successful');
-                window.location.href='loginandregis.html';
-              </script>";
-} else{
-    die(print_r(sqlsrv_errors(),true)); 
-} 
+    if ($result) {
+        echo "<script>
+                    alert('Registration Successful');
+                    window.location.href='loginandregis.html';
+                  </script>";
+    } else {
+        die("Registration failed. Please try again.");
+    }
 }
-?>
+

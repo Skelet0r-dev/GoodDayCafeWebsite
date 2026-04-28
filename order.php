@@ -26,67 +26,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $change = round($paymentAmount - $finalTotal, 2);
 
     // DB connect
-    $serverName = "ANGELO\\SQLEXPRESS";
-    $connectionOptions = [
-        "Database" => "Good_Day_Cafe",
-        "Uid"      => "",
-        "PWD"      => ""
-    ];
-    $conn = sqlsrv_connect($serverName, $connectionOptions);
-    if ($conn === false) {
-        die(print_r(sqlsrv_errors(), true));
-    }
+    require_once __DIR__ . '/db_config.php';
 
     // Transaction
-    if (!sqlsrv_begin_transaction($conn)) {
-        die(print_r(sqlsrv_errors(), true));
-    }
+    $conn->beginTransaction();
 
-    // Insert ORDER + get ORDER_ID
-    $sqlOrderInsert = "
-        INSERT INTO dbo.[ORDER] ([USER_ID], [TOTAL_PRICE], [ORDER_PLACED], [PAYMENT], [STATUS], [POSITION])
-        VALUES (?, ?, ?, ?, ?, ?);
-        SELECT CAST(SCOPE_IDENTITY() AS INT) AS ORDER_ID;
-    ";
-    $paramsOrder = [
-        $userId,
-        $finalTotal,
-        date('Y-m-d H:i:s'),
-        $paymentAmount,
-        $sessionStatus,
-        'ONGOING'
-    ];
-    $stmtOrder = sqlsrv_query($conn, $sqlOrderInsert, $paramsOrder);
-    if ($stmtOrder === false || !sqlsrv_next_result($stmtOrder)) {
-        sqlsrv_rollback($conn);
-        die(print_r(sqlsrv_errors(), true));
-    }
-    $row = sqlsrv_fetch_array($stmtOrder, SQLSRV_FETCH_ASSOC);
-    $orderId = $row['ORDER_ID'] ?? null;
-  
-    // Insert ORDER_ITEM rows
-    $sqlItemInsert = "
-        INSERT INTO dbo.[ORDER_ITEM] ([ORDER_ID], [PRODUCT_ID], [PRODUCT_NAME], [QUANTITY], [PRICE])
-        VALUES (?, ?, ?, ?, ?)";
-    foreach ($cartItems as $item) {
-        $paramsItem = [
-            $orderId,
-            $item['id'],
-            $item['name'],
-            $item['quantity'],
-            $item['price']
-        ];
-        $stmtItem = sqlsrv_query($conn, $sqlItemInsert, $paramsItem);
-        if ($stmtItem === false) {
-            sqlsrv_rollback($conn);
-            die(print_r(sqlsrv_errors(), true));
+    try {
+        // Insert ORDER
+        $sqlOrderInsert = "
+            INSERT INTO `order` (USER_ID, TOTAL_PRICE, ORDER_PLACED, PAYMENT, STATUS, POSITION)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ";
+        $stmtOrder = $conn->prepare($sqlOrderInsert);
+        $stmtOrder->execute([
+            $userId,
+            $finalTotal,
+            date('Y-m-d H:i:s'),
+            $paymentAmount,
+            $sessionStatus,
+            'ONGOING'
+        ]);
+        $orderId = $conn->lastInsertId();
+
+        // Insert ORDER_ITEM rows
+        $sqlItemInsert = "
+            INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE)
+            VALUES (?, ?, ?, ?, ?)
+        ";
+        $stmtItem = $conn->prepare($sqlItemInsert);
+        foreach ($cartItems as $item) {
+            $stmtItem->execute([
+                $orderId,
+                $item['id'],
+                $item['name'],
+                $item['quantity'],
+                $item['price']
+            ]);
         }
+
+        $conn->commit();
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        die("Order failed: " . $e->getMessage());
     }
 
-    // Commit
-    if (!sqlsrv_commit($conn)) {
-        die(print_r(sqlsrv_errors(), true));
-    }
 ?>
 <!doctype html>
 <html lang="en">

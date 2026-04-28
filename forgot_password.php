@@ -1,13 +1,6 @@
 <?php
 
-$serverName = "ANGELO\\SQLEXPRESS";
-$connectionOptions = [
-    "Database" => "Good_Day_Cafe",
-    "Uid" => "",
-    "PWD" => "",
-];
-
-$conn = sqlsrv_connect($serverName, $connectionOptions);
+require_once __DIR__ . '/db_config.php';
 
 if (!$conn) {
     die("<script>alert('Database connection failed'); window.location.href='loginandregis.html';</script>");
@@ -19,12 +12,11 @@ if (empty($_POST['resetEmail'])) {
 
 $resetEmail = $_POST['resetEmail'];
 
-$params = array($resetEmail);
-$sql = "SELECT * FROM dbo.[USERS] WHERE EMAIL = ?";
-$result = sqlsrv_query($conn, $sql, $params);
-$row = sqlsrv_fetch_array($result);
+$stmt = $conn->prepare("SELECT * FROM users WHERE EMAIL = ?");
+$stmt->execute([$resetEmail]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($row == null) {
+if ($row === false) {
     die("<script>
                 alert('Email not found');
                 window.location.href='loginandregis.html';
@@ -33,9 +25,8 @@ if ($row == null) {
 
 $token = bin2hex(random_bytes(32));
 
-$insertParams = array($resetEmail, $token);
-$sqlInsert = "INSERT INTO dbo.[PASSWORD_RESETS] (EMAIL, TOKEN) VALUES (?, ?)";
-sqlsrv_query($conn, $sqlInsert, $insertParams);
+$sqlInsert = "INSERT INTO password_resets (EMAIL, TOKEN) VALUES (?, ?)";
+$conn->prepare($sqlInsert)->execute([$resetEmail, $token]);
 
 $resetLink = "reset_password.html?token=" . $token;
 
@@ -57,4 +48,3 @@ if ($mailSent) {
               </script>");
 }
 
-?>

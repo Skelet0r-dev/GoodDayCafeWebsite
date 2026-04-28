@@ -6,14 +6,14 @@ function fetchSalesSummary($dbConnection, string $granularity = 'daily', ?string
 
     switch (strtolower($granularity)) {
         case 'weekly':
-            $periodExpression = "DATEADD(week, DATEDIFF(week, 0, o.ORDER_PLACED), 0)";
+            $periodExpression = "DATE_SUB(DATE(o.ORDER_PLACED), INTERVAL WEEKDAY(o.ORDER_PLACED) DAY)";
             break;
         case 'monthly':
-            $periodExpression = "DATEFROMPARTS(YEAR(o.ORDER_PLACED), MONTH(o.ORDER_PLACED), 1)";
+            $periodExpression = "DATE_FORMAT(o.ORDER_PLACED, '%Y-%m-01')";
             break;
         case 'daily':
         default:
-            $periodExpression = "CAST(o.ORDER_PLACED AS DATE)";
+            $periodExpression = "DATE(o.ORDER_PLACED)";
             break;
     }
 
@@ -28,11 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
     $allowedPositions = ['Ongoing', 'Completed', 'Cancelled'];
 
     if ($orderId > 0 && in_array($newPosition, $allowedPositions, true)) {
-        $updateSql    = "UPDATE dbo.[ORDER] SET POSITION = ? WHERE ORDER_ID = ?";
-        $updateParams = [$newPosition, $orderId];
-        $updateResult = sqlsrv_query($dbConnection, $updateSql, $updateParams);
-        if ($updateResult === false) {
-            error_log(print_r(sqlsrv_errors(), true));
+        $updateSql = "UPDATE `order` SET POSITION = ? WHERE ORDER_ID = ?";
+        try {
+            $dbConnection->prepare($updateSql)->execute([$newPosition, $orderId]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
         }
     }
 }
@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
             SUM(oi.QUANTITY * oi.PRICE) AS revenue,
             SUM(oi.QUANTITY)            AS units,
             COUNT(DISTINCT o.ORDER_ID)  AS orders
-        FROM dbo.[ORDER] o
-        JOIN dbo.[ORDER_ITEM] oi ON oi.ORDER_ID = o.ORDER_ID
+        FROM `order` o
+        JOIN order_item oi ON oi.ORDER_ID = o.ORDER_ID
         WHERE 1=1
     ";
 
@@ -65,18 +65,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
         $summaryParams[] = $productId;
     }
 
-    $summarySql .= " GROUP BY $periodExpression ORDER BY period DESC;";
-    $salesSummaryResult = sqlsrv_query($dbConnection, $summarySql, $summaryParams);
-    if ($salesSummaryResult === false) {
-        error_log(print_r(sqlsrv_errors(), true));
+    $summarySql .= " GROUP BY $periodExpression ORDER BY period DESC";
+    try {
+        $summaryStmt = $dbConnection->prepare($summarySql);
+        $summaryStmt->execute($summaryParams);
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
         return [];
     }
 
     $summaryResults = [];
-    while ($summaryRow = sqlsrv_fetch_array($salesSummaryResult, SQLSRV_FETCH_ASSOC)) {
-        if ($summaryRow['period'] instanceof DateTime) {
-            $summaryRow['period'] = $summaryRow['period']->format('Y-m-d');
-        }
+    while ($summaryRow = $summaryStmt->fetch(PDO::FETCH_ASSOC)) {
         $summaryResults[] = $summaryRow;
     }
     return $summaryResults;
@@ -104,8 +103,8 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
             oi.QUANTITY,
             oi.PRICE,
             (oi.QUANTITY * oi.PRICE) AS line_total
-        FROM dbo.[ORDER] o
-        JOIN dbo.[ORDER_ITEM] oi ON oi.ORDER_ID = o.ORDER_ID
+        FROM `order` o
+        JOIN order_item oi ON oi.ORDER_ID = o.ORDER_ID
         WHERE 1=1
     ";
 
@@ -124,35 +123,27 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
         $transactionParams[] = $productId;
     }
 
-    $transactionSql .= " ORDER BY o.ORDER_PLACED DESC, o.ORDER_ID DESC;";
-    $transactionsResult = sqlsrv_query($dbConnection, $transactionSql, $transactionParams);
-    if ($transactionsResult === false) {
-        error_log(print_r(sqlsrv_errors(), true));
+    $transactionSql .= " ORDER BY o.ORDER_PLACED DESC, o.ORDER_ID DESC";
+    try {
+        $transactionStmt = $dbConnection->prepare($transactionSql);
+        $transactionStmt->execute($transactionParams);
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
         return [];
     }
 
     $transactionRecords = [];
-    while ($transactionRow = sqlsrv_fetch_array($transactionsResult, SQLSRV_FETCH_ASSOC)) {
-        if ($transactionRow['ORDER_PLACED'] instanceof DateTime) {
-            $transactionRow['ORDER_PLACED'] = $transactionRow['ORDER_PLACED']->format('Y-m-d H:i:s');
-        }
+    while ($transactionRow = $transactionStmt->fetch(PDO::FETCH_ASSOC)) {
         $transactionRecords[] = $transactionRow;
     }
     return $transactionRecords;
 }
 
 session_start();
-$serverName = "ANGELO\\SQLEXPRESS";
-$connectionOptions = [
-    "Database" => "Good_Day_Cafe",
-    "Uid"      => "",
-    "PWD"      => "",
-];
+require_once __DIR__ . '/../db_config.php';
+$dbConnection = $conn;
 
-
-$dbConnection = sqlsrv_connect($serverName, $connectionOptions);
 if ($dbConnection === false) {
-    error_log(print_r(sqlsrv_errors(), true));
     die("Database connection failed. Please try again later.");
 }
 
@@ -170,7 +161,7 @@ $lastName  = $_SESSION['lname'] ?? '';
 
 // Fetch products with their images
 $productsQuery = "
-SELECT 
+SELECT
     p.PRODUCT_ID,
     p.PRODUCT_NAME,
     p.DESCRIPTION,
@@ -178,17 +169,18 @@ SELECT
     p.PRODUCT_CATEGORY,
     i.IMAGE_NAME,
     i.FILEPATH
-FROM PRODUCTS p
-LEFT JOIN PRODUCT_IMAGE i ON p.PRODUCT_ID = i.PRODUCT_ID
+FROM products p
+LEFT JOIN product_image i ON p.PRODUCT_ID = i.PRODUCT_ID
 ";
-$productsResult = sqlsrv_query($dbConnection, $productsQuery);
-if ($productsResult === false) {
-    error_log(print_r(sqlsrv_errors(), true));
+try {
+    $productsStmt = $dbConnection->query($productsQuery);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
     die("Failed to retrieve products. Please check your database logs.");
 }
 
 $products = [];
-while ($productRow = sqlsrv_fetch_array($productsResult)) {
+while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
     if (isset($productRow['FILEPATH'])) {
         $productRow['FILEPATH'] = str_replace(
             'C:\\xampp\\htdocs\\demo\\GoodayCafeWebsite-main',
