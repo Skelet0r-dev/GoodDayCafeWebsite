@@ -1,17 +1,5 @@
 <?php
-$serverName = "ANGELO\\SQLEXPRESS";
-$connectionOptions = [
-    "Database" => "Good_Day_Cafe",
-    "Uid" => "",
-    "PWD" => "",
-];
-
-// Secure database connection
-$conn = sqlsrv_connect($serverName, $connectionOptions);
-if ($conn === false) {
-    error_log(print_r(sqlsrv_errors(), true));
-    die("Database connection failed. Please try again later.");
-}
+require_once __DIR__ . '/db_config.php';
 
 session_start(); // Start the session to access data
 
@@ -23,7 +11,7 @@ $status = isset($_SESSION['status']) ? $_SESSION['status'] : '';
 
 // Fetch products with their images
 $query = "
-SELECT 
+SELECT
     p.PRODUCT_ID,
     p.PRODUCT_NAME,
     p.DESCRIPTION,
@@ -31,18 +19,19 @@ SELECT
     p.PRODUCT_CATEGORY,
     i.IMAGE_NAME,
     i.FILEPATH
-FROM PRODUCTS p
-LEFT JOIN PRODUCT_IMAGE i ON p.PRODUCT_ID = i.PRODUCT_ID
+FROM products p
+LEFT JOIN product_image i ON p.PRODUCT_ID = i.PRODUCT_ID
 ";
-$result = sqlsrv_query($conn, $query);
 
-if ($result === false) {
-    error_log(print_r(sqlsrv_errors(), true)); // Log error if the query fails
+try {
+    $stmt = $conn->query($query);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
     die("Failed to retrieve products. Please check your database logs.");
 }
 
 $products = [];
-while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if (isset($row['FILEPATH'])) {
         $row['FILEPATH'] = str_replace(
             'C:\\xampp\\htdocs\\demo\\GoodayCafeWebsite-main',

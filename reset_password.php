@@ -1,13 +1,6 @@
 <?php
 
-$serverName = "ANGELO\\SQLEXPRESS";
-$connectionOptions = [
-    "Database" => "Good_Day_Cafe",
-    "Uid" => "",
-    "PWD" => "",
-];
-
-$conn = sqlsrv_connect($serverName, $connectionOptions);
+require_once __DIR__ . '/db_config.php';
 
 if (!$conn) {
     die("<script>alert('Database connection failed'); window.location.href='loginandregis.html';</script>");
@@ -17,15 +10,16 @@ if (empty($_POST['token']) || empty($_POST['newPassword'])) {
     die("<script>alert('Invalid request'); window.location.href='loginandregis.html';</script>");
 }
 
-$token = $_POST['token'];
+$token       = $_POST['token'];
 $newPassword = $_POST['newPassword'];
 
-$params = array($token);
-$sql = "SELECT * FROM dbo.[PASSWORD_RESETS] WHERE TOKEN = ? AND CREATED_AT >= DATEADD(HOUR, -1, GETDATE())";
-$result = sqlsrv_query($conn, $sql, $params);
-$row = sqlsrv_fetch_array($result);
+$stmt = $conn->prepare(
+    "SELECT * FROM password_resets WHERE TOKEN = ? AND CREATED_AT >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
+);
+$stmt->execute([$token]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($row == null) {
+if ($row === false) {
     die("<script>
                 alert('Invalid or expired token');
                 window.location.href='loginandregis.html';
@@ -34,17 +28,14 @@ if ($row == null) {
 
 $email = $row['EMAIL'];
 
-$updateParams = array($newPassword, $email);
-$sqlUpdate = "UPDATE dbo.[USERS] SET PASS = ? WHERE EMAIL = ?";
-sqlsrv_query($conn, $sqlUpdate, $updateParams);
+$conn->prepare("UPDATE users SET PASS = ? WHERE EMAIL = ?")
+     ->execute([$newPassword, $email]);
 
-$deleteParams = array($token);
-$sqlDelete = "DELETE FROM dbo.[PASSWORD_RESETS] WHERE TOKEN = ?";
-sqlsrv_query($conn, $sqlDelete, $deleteParams);
+$conn->prepare("DELETE FROM password_resets WHERE TOKEN = ?")
+     ->execute([$token]);
 
 die("<script>
             alert('Password reset successful');
             window.location.href='loginandregis.html';
           </script>");
 
-?>
