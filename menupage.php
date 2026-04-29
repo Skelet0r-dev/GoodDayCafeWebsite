@@ -9,6 +9,18 @@ $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 $status = isset($_SESSION['status']) ? $_SESSION['status'] : '';
 
+function normalizeImagePath(?string $filepath): ?string
+{
+    if (!$filepath) {
+        return $filepath;
+    }
+
+    $normalized = str_replace('\\', '/', $filepath);
+    $uploadsPos = strpos($normalized, '/uploads/');
+
+    return $uploadsPos === false ? $normalized : substr($normalized, $uploadsPos);
+}
+
 // Fetch products with their images
 $query = "
 SELECT
@@ -33,11 +45,7 @@ try {
 $products = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if (isset($row['filepath'])) {
-        $row['filepath'] = str_replace(
-            'C:\\xampp\\htdocs\\demo\\GoodayCafeWebsite-main',
-            '/demo/GoodayCafeWebsite-main',
-            $row['filepath']
-        );
+        $row['filepath'] = normalizeImagePath($row['filepath']);
     }
     $products[] = $row;
 }
