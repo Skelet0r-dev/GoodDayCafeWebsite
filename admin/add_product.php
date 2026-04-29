@@ -32,8 +32,9 @@ if (!$productId) {
 
 // Handle image upload
 $destination = __DIR__ . '/../uploads/';
-$imageName      = basename($image['name']);
+$imageName = basename($image['name']);
 $targetImagePath = $destination . $imageName;
+$webPath = '/uploads/' . $imageName;
 $allowedTypes   = ['png', 'jpg', 'jpeg', 'gif'];
 $fileType       = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
 
@@ -53,7 +54,7 @@ $insertImageStmt = $conn->prepare(
      VALUES (?, ?, ?)"
 );
 
-if (!$insertImageStmt->execute([$imageName, $targetImagePath, $productId])) {
+if (!$insertImageStmt->execute([$imageName, $webPath, $productId])) {
     die("Failed to save image data.");
 }
 

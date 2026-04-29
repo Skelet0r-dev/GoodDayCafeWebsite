@@ -19,6 +19,17 @@ document.addEventListener("DOMContentLoaded", function () {
   let cartItems = [];
   let total = 0;
 
+  function getImageUrl(filepath) {
+    if (!filepath) {
+      return "";
+    }
+
+    const normalizedPath = filepath.replace(/\\/g, "/");
+    const uploadsIndex = normalizedPath.indexOf("/uploads/");
+
+    return uploadsIndex === -1 ? normalizedPath : normalizedPath.slice(uploadsIndex);
+  }
+
   function applyDiscount(amount) {
     const el = document.getElementById('userStatus');
     const status = el ? (el.value || '').trim().toUpperCase() : '';
@@ -148,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
     cardContainer.innerHTML = `
       <div class="card text-center" style="background-color: rgb(92, 78, 59);">
         <div class="card-img-container beige-custom" style="height: 200px; overflow: hidden; background-color: rgb(237, 223, 203);">
-          <img src="${product.filepath}" alt="${product.product_name}" class="card-img-top" style="width: 100%; height: 100%; object-fit: contain;">
+          <img src="${getImageUrl(product.filepath)}" alt="${product.product_name}" class="card-img-top" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="card-body">
           <h5 class="card-title beige-custom">${product.product_name}</h5>
@@ -181,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
           <div class="modal-body">
             <div class="text-center">
-              <img src="${product.filepath}" alt="${product.product_name}" class="w-100 mb-3" style="height: 300px; object-fit: contain; border-radius: 8px;">
+              <img src="${getImageUrl(product.filepath)}" alt="${product.product_name}" class="w-100 mb-3" style="height: 300px; object-fit: contain; border-radius: 8px;">
             </div>
             <p><strong>Description:</strong> ${product.description}</p>
             <p><strong>Price:</strong> ₱${product.price}</p>
