@@ -139,6 +139,18 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
     return $transactionRecords;
 }
 
+function normalizeImagePath(?string $filepath): ?string
+{
+    if (!$filepath) {
+        return $filepath;
+    }
+
+    $normalized = str_replace('\\', '/', $filepath);
+    $uploadsPos = strpos($normalized, '/uploads/');
+
+    return $uploadsPos === false ? $normalized : substr($normalized, $uploadsPos);
+}
+
 session_start();
 require_once __DIR__ . '/../db_config.php';
 $dbConnection = $conn;
@@ -182,11 +194,7 @@ try {
 $products = [];
 while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
     if (isset($productRow['filepath'])) {
-        $productRow['filepath'] = str_replace(
-            'C:\\xampp\\htdocs\\demo\\GoodayCafeWebsite-main',
-            '/demo/GoodayCafeWebsite-main',
-            $productRow['filepath']
-        );
+        $productRow['filepath'] = normalizeImagePath($productRow['filepath']);
     }
     $products[] = $productRow;
 }
