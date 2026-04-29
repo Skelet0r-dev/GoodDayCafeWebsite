@@ -353,7 +353,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
       const products = <?php echo json_encode($products); ?>;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/demo/GoodayCafeWebsite-main/assets/js/product.js"></script>
+    <script src="assets/js/product.js"></script>
 
   </body>
 </html>
