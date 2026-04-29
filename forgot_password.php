@@ -12,7 +12,7 @@ if (empty($_POST['resetEmail'])) {
 
 $resetEmail = $_POST['resetEmail'];
 
-$stmt = $conn->prepare("SELECT * FROM users WHERE EMAIL = ?");
+$stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
 $stmt->execute([$resetEmail]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -25,7 +25,7 @@ if ($row === false) {
 
 $token = bin2hex(random_bytes(32));
 
-$sqlInsert = "INSERT INTO password_resets (EMAIL, TOKEN) VALUES (?, ?)";
+$sqlInsert = "INSERT INTO password_resets (email, token) VALUES (?, ?)";
 $conn->prepare($sqlInsert)->execute([$resetEmail, $token]);
 
 $resetLink = "reset_password.html?token=" . $token;

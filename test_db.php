@@ -1,8 +1,5 @@
 <?php
-/**
- * MySQL database connection via PDO.
- */
-$host     = "mysql";           // Docker service name, NOT localhost
+$host     = "mysql";
 $dbname   = "Good_Day_Cafe";
 $username = "myuser";
 $password = "mypassword";
@@ -14,7 +11,7 @@ try {
         $password
     );
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "✅ Connected successfully to: " . $dbname;
 } catch (PDOException $e) {
-    error_log($e->getMessage());
-    die("Database connection failed. Please try again later.");
+    echo "❌ Error: " . $e->getMessage();  // shows the REAL error
 }

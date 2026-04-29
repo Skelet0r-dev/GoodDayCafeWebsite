@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
     $allowedPositions = ['Ongoing', 'Completed', 'Cancelled'];
 
     if ($orderId > 0 && in_array($newPosition, $allowedPositions, true)) {
-        $updateSql = "UPDATE `order` SET POSITION = ? WHERE ORDER_ID = ?";
+        $updateSql = "UPDATE `order` SET POSITION = ? WHERE order_id = ?";
         try {
             $dbConnection->prepare($updateSql)->execute([$newPosition, $orderId]);
         } catch (PDOException $e) {
@@ -43,21 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
     $summarySql = "
         SELECT
             $periodExpression AS period,
-            SUM(oi.QUANTITY * oi.PRICE) AS revenue,
-            SUM(oi.QUANTITY)            AS units,
-            COUNT(DISTINCT o.ORDER_ID)  AS orders
+            SUM(oi.quantity * oi.price) AS revenue,
+            SUM(oi.quantity)            AS units,
+            COUNT(DISTINCT o.order_id)  AS orders
         FROM `order` o
-        JOIN order_item oi ON oi.ORDER_ID = o.ORDER_ID
+        JOIN order_item oi ON oi.order_id = o.order_id
         WHERE 1=1
     ";
 
     $summaryParams = [];
     if ($hasStartDate) {
-        $summarySql    .= " AND o.ORDER_PLACED >= ? ";
+        $summarySql    .= " AND o.order_placed >= ? ";
         $summaryParams[] = $startDate;
     }
     if ($hasEndDate) {
-        $summarySql    .= " AND o.ORDER_PLACED < ? ";
+        $summarySql    .= " AND o.order_placed < ? ";
         $summaryParams[] = $endDateExclusive;
     }
     if (!is_null($productId)) {
@@ -93,29 +93,29 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
 
     $transactionSql = "
         SELECT
-            o.ORDER_ID,
-            o.USER_ID,
-            o.ORDER_PLACED,
-            o.POSITION,          -- add this
-            o.STATUS,         -- keep/remove as needed
-            oi.PRODUCT_ID,
-            oi.PRODUCT_NAME,
-            oi.QUANTITY,
-            oi.PRICE,
-            (oi.QUANTITY * oi.PRICE) AS line_total
+            o.order_id,
+            o.user_id,
+            o.order_placed,
+            o.position,          -- add this
+            o.status,         -- keep/remove as needed
+            oi.product_id,
+            oi.product_name,
+            oi.quantity,
+            oi.price,
+            (oi.quantity * oi.price) AS line_total
         FROM `order` o
-        JOIN order_item oi ON oi.ORDER_ID = o.ORDER_ID
+        JOIN order_item oi ON oi.order_id = o.order_id
         WHERE 1=1
     ";
 
 
     $transactionParams = [];
     if ($hasStartDate) {
-        $transactionSql    .= " AND o.ORDER_PLACED >= ? ";
+        $transactionSql    .= " AND o.order_placed >= ? ";
         $transactionParams[] = $startDate;
     }
     if ($hasEndDate) {
-        $transactionSql    .= " AND o.ORDER_PLACED < ? ";
+        $transactionSql    .= " AND o.order_placed < ? ";
         $transactionParams[] = $endDateExclusive;
     }
     if (!is_null($productId)) {
@@ -123,7 +123,7 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
         $transactionParams[] = $productId;
     }
 
-    $transactionSql .= " ORDER BY o.ORDER_PLACED DESC, o.ORDER_ID DESC";
+    $transactionSql .= " ORDER BY o.order_placed DESC, o.order_od DESC";
     try {
         $transactionStmt = $dbConnection->prepare($transactionSql);
         $transactionStmt->execute($transactionParams);
@@ -162,15 +162,15 @@ $lastName  = $_SESSION['lname'] ?? '';
 // Fetch products with their images
 $productsQuery = "
 SELECT
-    p.PRODUCT_ID,
-    p.PRODUCT_NAME,
-    p.DESCRIPTION,
-    p.PRICE,
-    p.PRODUCT_CATEGORY,
-    i.IMAGE_NAME,
-    i.FILEPATH
+    p.product_id,
+    p.product_name,
+    p.description,
+    p.price,
+    p.product_category,
+    i.image_name,
+    i.filepath
 FROM products p
-LEFT JOIN product_image i ON p.PRODUCT_ID = i.PRODUCT_ID
+LEFT JOIN product_image i ON p.product_id = i.product_id
 ";
 try {
     $productsStmt = $dbConnection->query($productsQuery);
@@ -181,11 +181,11 @@ try {
 
 $products = [];
 while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
-    if (isset($productRow['FILEPATH'])) {
-        $productRow['FILEPATH'] = str_replace(
+    if (isset($productRow['filepath'])) {
+        $productRow['filepath'] = str_replace(
             'C:\\xampp\\htdocs\\demo\\GoodayCafeWebsite-main',
             '/demo/GoodayCafeWebsite-main',
-            $productRow['FILEPATH']
+            $productRow['filepath']
         );
     }
     $products[] = $productRow;
@@ -387,17 +387,17 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
     <?php foreach ($reportDetail as $transactionRow): ?>
         <tr>
             <td><?= (int)$transactionRow['ORDER_ID']; ?></td>
-            <td><?= htmlspecialchars($transactionRow['USER_ID'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= htmlspecialchars($transactionRow['ORDER_PLACED'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= htmlspecialchars($transactionRow['POSITION'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= (int)$transactionRow['PRODUCT_ID']; ?></td>
-            <td><?= htmlspecialchars($transactionRow['PRODUCT_NAME'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= (int)$transactionRow['QUANTITY']; ?></td>
-            <td>₱<?= number_format((float)$transactionRow['PRICE'], 2); ?></td>
+            <td><?= htmlspecialchars($transactionRow['user_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= htmlspecialchars($transactionRow['order_placed'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= htmlspecialchars($transactionRow['position'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= (int)$transactionRow['product_id']; ?></td>
+            <td><?= htmlspecialchars($transactionRow['product_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= (int)$transactionRow['quantity']; ?></td>
+            <td>₱<?= number_format((float)$transactionRow['price'], 2); ?></td>
             <td>₱<?= number_format((float)$transactionRow['line_total'], 2); ?></td>
             <td>
                 <form method="post" class="d-flex gap-1 align-items-center">
-                    <input type="hidden" name="order_id" value="<?= (int)$transactionRow['ORDER_ID']; ?>">
+                    <input type="hidden" name="order_id" value="<?= (int)$transactionRow['order_id']; ?>">
                     <select name="new_position" class="form-select form-select-sm">
                         <?php foreach (['Ongoing', 'Completed', 'Cancelled'] as $positionOption): ?>
                             <option value="<?= $positionOption; ?>"

@@ -9,7 +9,7 @@ $status   = $_POST['statusReg'];
 $passReg  = $_POST['passReg'];
 
 // Check if email is already taken
-$checkStmt = $conn->prepare("SELECT EMAIL FROM users WHERE EMAIL = ?");
+$checkStmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
 $checkStmt->execute([$emailReg]);
 $emailcheck = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -21,7 +21,7 @@ if ($emailcheck !== false) {
     exit;
 } else {
     $insertStmt = $conn->prepare(
-        "INSERT INTO users (FIRSTNAME, LASTNAME, DATEOFBIRTH, EMAIL, PASS, STATUS)
+        "INSERT INTO users (firstname, lastname, dateofbirth, email, pass, status)
          VALUES (?, ?, ?, ?, ?, ?)"
     );
     $result = $insertStmt->execute([$fname, $lname, $bday, $emailReg, $passReg, $status]);

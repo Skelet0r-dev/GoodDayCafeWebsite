@@ -9,18 +9,18 @@ if ($productId <= 0) {
 }
 
 // Get the image path
-$stmt = $conn->prepare("SELECT FILEPATH FROM product_image WHERE PRODUCT_ID = ?");
+$stmt = $conn->prepare("SELECT filepath FROM product_image WHERE product_id = ?");
 $stmt->execute([$productId]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $imagePath = $row['FILEPATH'] ?? null;
 
 // Delete image record from database
-$conn->prepare("DELETE FROM product_image WHERE PRODUCT_ID = ?")
+$conn->prepare("DELETE FROM product_image WHERE product_id = ?")
      ->execute([$productId]);
 
 // Delete product record
 try {
-    $conn->prepare("DELETE FROM products WHERE PRODUCT_ID = ?")
+    $conn->prepare("DELETE FROM products WHERE product_id = ?")
          ->execute([$productId]);
 } catch (PDOException $e) {
     error_log($e->getMessage());

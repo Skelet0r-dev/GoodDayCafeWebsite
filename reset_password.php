@@ -14,7 +14,7 @@ $token       = $_POST['token'];
 $newPassword = $_POST['newPassword'];
 
 $stmt = $conn->prepare(
-    "SELECT * FROM password_resets WHERE TOKEN = ? AND CREATED_AT >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
+    "SELECT * FROM password_resets WHERE token = ? AND CREATED_AT >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
 );
 $stmt->execute([$token]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -28,10 +28,10 @@ if ($row === false) {
 
 $email = $row['EMAIL'];
 
-$conn->prepare("UPDATE users SET PASS = ? WHERE EMAIL = ?")
+$conn->prepare("UPDATE users SET pass = ? WHERE email = ?")
      ->execute([$newPassword, $email]);
 
-$conn->prepare("DELETE FROM password_resets WHERE TOKEN = ?")
+$conn->prepare("DELETE FROM password_resets WHERE token = ?")
      ->execute([$token]);
 
 die("<script>

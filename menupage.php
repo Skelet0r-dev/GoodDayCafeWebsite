@@ -12,15 +12,15 @@ $status = isset($_SESSION['status']) ? $_SESSION['status'] : '';
 // Fetch products with their images
 $query = "
 SELECT
-    p.PRODUCT_ID,
-    p.PRODUCT_NAME,
-    p.DESCRIPTION,
-    p.PRICE,
-    p.PRODUCT_CATEGORY,
-    i.IMAGE_NAME,
-    i.FILEPATH
+    p.product_id,
+    p.product_name,
+    p.description,
+    p.price,
+    p.product_category,
+    i.image_name,
+    i.filepath
 FROM products p
-LEFT JOIN product_image i ON p.PRODUCT_ID = i.PRODUCT_ID
+LEFT JOIN product_image i ON p.product_id = i.product_id
 ";
 
 try {
@@ -32,11 +32,11 @@ try {
 
 $products = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    if (isset($row['FILEPATH'])) {
-        $row['FILEPATH'] = str_replace(
+    if (isset($row['filepath'])) {
+        $row['filepath'] = str_replace(
             'C:\\xampp\\htdocs\\demo\\GoodayCafeWebsite-main',
             '/demo/GoodayCafeWebsite-main',
-            $row['FILEPATH']
+            $row['filepath']
         );
     }
     $products[] = $row;
