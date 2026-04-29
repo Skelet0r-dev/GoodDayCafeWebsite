@@ -47,4 +47,3 @@ if ($mailSent) {
                 window.location.href='" . addslashes($resetLink) . "';
               </script>");
 }
-

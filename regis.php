@@ -35,4 +35,3 @@ if ($emailcheck !== false) {
         die("Registration failed. Please try again.");
     }
 }
-

@@ -47,4 +47,3 @@ if ($rowpass === false) {
     header("Location: menupage.php");
     exit;
 }
-

@@ -12,7 +12,7 @@ if ($productId <= 0) {
 $stmt = $conn->prepare("SELECT filepath FROM product_image WHERE product_id = ?");
 $stmt->execute([$productId]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-$imagePath = $row['FILEPATH'] ?? null;
+$imagePath = $row['filepath'] ?? null;
 
 // Delete image record from database
 $conn->prepare("DELETE FROM product_image WHERE product_id = ?")
