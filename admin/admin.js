@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalsContainer = document.createElement("div"); // Container for modals
     document.body.appendChild(modalsContainer);
 
+    function getImageUrl(filepath) {
+        if (!filepath) {
+            return "";
+        }
+
+        const normalizedPath = filepath.replace(/\\/g, "/");
+        const uploadsIndex = normalizedPath.indexOf("/uploads/");
+
+        return uploadsIndex === -1 ? normalizedPath : normalizedPath.slice(uploadsIndex);
+    }
+
     // Function to create a product card
     function createProductCard(product) {
     const cardContainer = document.createElement("div");
@@ -25,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
                 background-color: rgb(237, 223, 203);
             ">
-                <img src="${product.filepath}" alt="${product.product_name}" class="card-img-top" style="
+                <img src="${getImageUrl(product.filepath)}" alt="${product.product_name}" class="card-img-top" style="
                     padding-top: 10px;
                     width: 100%;
                     height: 100%;
@@ -92,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="modal-body">
                         <div class="text-center">
-                            <img src="${product.filepath}" alt="${product.product_name}" style="width: 100%; height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 20px;">
+                            <img src="${getImageUrl(product.filepath)}" alt="${product.product_name}" style="width: 100%; height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 20px;">
                         </div>
 
                     <div class="container justify-content-center d-flex flex-column align-items-center">
