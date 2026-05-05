@@ -1,10 +1,12 @@
 <?php
-require_once __DIR__ . '/db_config.php';
-
 session_start(); // Start the session to access data
 
+$isGuest = !isset($_SESSION['user_id']) && !isset($_SESSION['status']);
+
+require_once __DIR__ . '/db_config.php';
+
 $firstName = isset($_SESSION['fname']) ? $_SESSION['fname'] : 'Guest';
-$lastName = isset($_SESSION['lname']) ? $_SESSION['lname'] : 'User';
+$lastName = isset($_SESSION['lname']) ? $_SESSION['lname'] : '';
 $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 $status = isset($_SESSION['status']) ? $_SESSION['status'] : '';
@@ -58,13 +60,51 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Good Day Cafe</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/menupage_styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+    <style>
+      /* Ensure sections don't hide behind the sticky navbar */
+      [id^="product"] {
+        scroll-margin-top: 100px;
+      }
+      #navbar {
+        top: 0 !important;
+      }
+      @media (max-width: 768px) {
+        [id^="product"] {
+          scroll-margin-top: 140px; /* More margin for mobile navbar */
+        }
+      }
+      /* Fix for sticky navbar on some mobile browsers */
+      html, body {
+        overflow-x: visible !important;
+        height: auto !important;
+      }
+      /* Premium Mobile Buttons */
+      .nav-btn-mobile {
+        background: linear-gradient(135deg, #fcd77e, #ffe0b4) !important;
+        color: rgb(92, 78, 59) !important;
+        border: none !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+        box-shadow: 0 4px 12px rgba(252, 215, 126, 0.5) !important;
+        padding: 8px 20px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        transition: all 0.3s ease !important;
+      }
+      .nav-btn-mobile:active {
+        transform: scale(0.92) !important;
+        filter: brightness(0.9) !important;
+      }
+    </style>
   </head>
+  <body style="background:rgb(245, 240, 233);">
 
   <header>
     <!-- Carousel: autoplay enabled via data attributes below -->
@@ -125,16 +165,17 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     </div>
   </div>
 
-  <!-- NAVBAR -->
-  <div class="container-fluid py-2 mb-2 mt-4 sticky-top" id="navbar">
-    <div class="container py-3 px-3" style="background: rgb(92, 78, 59); border-radius:40px;">
+  <!-- STICKY NAVBAR WRAPPER -->
+  <div style="position: -webkit-sticky; position: sticky; top: 0; z-index: 1020; background:rgb(245, 240, 233);">
+    <div class="container-fluid py-2" id="navbar">
+      <div class="container py-3 px-3" style="background: rgb(92, 78, 59); border-radius:40px;">
       
       <!-- Mobile controls -->
-      <div class="d-flex d-md-none justify-content-between align-items-center mb-2">
-        <button class="btn btn-light btn-sm rounded-pill px-3" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
+      <div class="d-flex d-md-none justify-content-between align-items-center">
+        <button class="btn btn-sm rounded-pill px-4 py-2 nav-btn-mobile" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
           Menu <i class="bi bi-list"></i>
         </button>
-        <button class="btn btn-light btn-sm rounded-pill px-3 toggle-nav-cart" data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="cart">
+        <button class="btn btn-sm rounded-pill px-4 py-2 nav-btn-mobile toggle-nav-cart" data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="cart">
           Cart <i class="bi bi-cart-fill"></i>
         </button>
       </div>
@@ -158,8 +199,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <a href="#productHotDrinkRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link toggle-nav">Hot-Drinks</a>
         <a href="#productFrappeRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link toggle-nav">Frappes</a>
         <a href="#productRefresherRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link toggle-nav">Refresher</a>
-        <a href="#productPizzaRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link toggle-nav">Pizzas</a>
-        <a href="#productPastaRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link toggle-nav">Pastas</a>
         <a href="#productPastryRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link toggle-nav">Pastries</a>
 
         <!-- Cart -->
@@ -186,16 +225,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <a href="#productHotDrinkRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav" data-bs-dismiss="offcanvas">Hot-Drinks</a>
     <a href="#productFrappeRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav" data-bs-dismiss="offcanvas">Frappes</a>
     <a href="#productRefresherRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav" data-bs-dismiss="offcanvas">Refresher</a>
-    <a href="#productPizzaRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav" data-bs-dismiss="offcanvas">Pizzas</a>
-    <a href="#productPastaRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav" data-bs-dismiss="offcanvas">Pastas</a>
     <a href="#productPastryRow" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav" data-bs-dismiss="offcanvas">Pastries</a>
-    <a href="#" class="btn btn-sm rounded-pill nav-btn px-3 nav-link text-start w-100 toggle-nav-cart" data-bs-toggle="offcanvas" data-bs-target="#cart" data-bs-dismiss="offcanvas">Cart</a>
   </div>
 </div>
 
   <div style="padding-top: 20px;"></div>
-
-  <body style="background:rgb(245, 240, 233);">
 
     <!-- Clickable Cards -->
     <div class="container py-5" id="card-section-Iced-Coffee">
@@ -249,32 +283,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 <p>Check out some of our popular Refresher's items!</p>
               </div>
               <div class="row g-4 refresher-drinks-container"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pizza Section -->
-        <div class="row g-4" id="productPizzaRow">
-          <div style="padding-top: 20px;">
-            <div class="container-fluid">
-              <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pizza</h1>
-                <p>Check out some of our popular Pizza items!</p>
-              </div>
-              <div class="row g-4 pizza-container"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pasta Section -->
-        <div class="row g-4" id="productPastaRow">
-          <div style="padding-top: 20px;">
-            <div class="container-fluid">
-              <div class="container text-start">
-                <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pasta</h1>
-                <p>Check out some of our popular Pasta items!</p>
-              </div>
-              <div class="row g-4 pasta-container"></div>
             </div>
           </div>
         </div>
@@ -339,20 +347,25 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <p><strong>First Name:</strong> <?php echo htmlspecialchars($firstName); ?></p>
-        <p><strong>Last Name:</strong> <?php echo htmlspecialchars($lastName); ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
-        <p><strong>Status:</strong> <?php echo htmlspecialchars($status); ?></p>
-
-        <a href="loginandregis.html" class="btn btn-danger mt-3">Logout</a>
+        <?php if ($isGuest): ?>
+            <p class="text-muted">Browse our menu and log in to place an order.</p>
+            <a href="loginandregis.html" class="btn btn-warning mt-3">Login to Order</a>
+        <?php else: ?>
+            <p><strong>First Name:</strong> <?php echo htmlspecialchars($firstName); ?></p>
+            <p><strong>Last Name:</strong> <?php echo htmlspecialchars($lastName); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
+            <p><strong>Status:</strong> <?php echo htmlspecialchars($status); ?></p>
+            <a href="logout.php" class="btn btn-danger mt-3">Logout</a>
+        <?php endif; ?>
         <!-- Additional user info can be added here -->
       </div>
     </div>
 
     <script>
       const products = <?php echo json_encode($products); ?>;
+      const isGuest = <?php echo json_encode($isGuest); ?>;
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/product.js"></script>
 
   </body>

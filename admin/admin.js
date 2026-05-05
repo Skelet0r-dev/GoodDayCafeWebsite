@@ -4,8 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const hotDrinksContainer = document.querySelector(".hot-drinks-container");
     const frappeDrinksContainer = document.querySelector(".frappe-drinks-container");
     const refresherDrinksContainer = document.querySelector(".refresher-drinks-container");
-    const pizzaContainer = document.querySelector(".pizza-container");
-    const pastaContainer = document.querySelector(".pasta-container");
     const pastriesContainer = document.querySelector(".pastries-container");
 
     const modalsContainer = document.createElement("div"); // Container for modals
@@ -48,9 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h5 class="card-title beige-custom">${product.product_name}</h5>
                 <p class="card-text beige-custom">${product.description}</p>
                 <div class="mt-auto d-flex gap-2 justify-content-center">
-                    <!-- Add to Cart Button -->
-                    <button type="button" class="btn btn-cart" data-bs-toggle="modal" data-bs-target="#modal-${product.product_id}">
-                        Add to Cart <i class="bi bi-cart-fill"></i>
+                    <!-- Edit Button -->
+                    <button type="button" class="btn btn-warning w-100 fw-bold" onclick="openEditModal(${product.product_id}, '${product.product_name}', '${product.description}', ${product.price}, '${product.product_category}')">
+                        Edit <i class="bi bi-pencil-square"></i>
                     </button>
                 </div>
             </div>
@@ -58,13 +56,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         <!-- Remove Button -->
-        <button type="button" class="btn btn-danger btn-remove" style="
+        <button type="button" class="btn btn-danger btn-remove mt-2" style="
             width: 100%;
             font-size: 16px;
             font-weight: bold;
         ">
 
-            Remove ${product.product_name}
+            Remove <i class="bi bi-trash3-fill"></i>
         </button>
     `;
 
@@ -179,10 +177,6 @@ document.addEventListener("DOMContentLoaded", function () {
             frappeDrinksContainer.appendChild(card); // Add to Frappe's Row
         } else if (product.product_category === "Pastry") {
             pastriesContainer.appendChild(card); // Add to Pastry's Row
-        } else if (product.product_category === "Pasta") {
-            pastaContainer .appendChild(card); // Add to Pasta's Row
-        } else if (product.product_category === "Pizza") {
-            pizzaContainer.appendChild(card); // Add to Pizza's Row
         } else if (product.product_category === "Refresher") {
             refresherDrinksContainer.appendChild(card); // Add to Refresher's Row
         } else {
@@ -218,14 +212,6 @@ function increaseQuantity() {
 document.addEventListener('DOMContentLoaded', function() {
     updateDisplay();
 });
-
-
-
-
-
-
-
-
 
 
 
@@ -319,3 +305,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+// Function to open the edit modal and populate it with product data
+function openEditModal(id, name, desc, price, category) {
+    document.getElementById('editProductId').value = id;
+    document.getElementById('editProductName').value = name;
+    document.getElementById('editProductDescription').value = desc;
+    document.getElementById('editProductPrice').value = price;
+    document.getElementById('editProductCategory').value = category;
+
+    const editModal = new bootstrap.Modal(document.getElementById('edit-product-modal'));
+    editModal.show();
+}

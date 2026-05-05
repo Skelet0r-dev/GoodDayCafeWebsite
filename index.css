@@ -191,19 +191,71 @@ body {
   color: #fff;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
   .hero {
-    height: 75vh;
+    height: 85vh; /* slightly taller for better mobile presence */
   }
-  .hero-content h1 {
-    font-size: 2.25rem;
+
+  .display-4, .hero-content h1 {
+    font-size: 2rem !important;
   }
+  
+  .hero-content {
+    padding: 0 1.5rem;
+    width: 100%;
+  }
+
   .hero-content .lead {
     font-size: 1rem;
+    margin-bottom: 1.5rem !important;
   }
-.hero-logo {
-  height:120px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+
+  .hero-content .d-flex {
+    flex-direction: column;
+    gap: 0.75rem !important;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .hero-content .btn {
+    width: 100%;
+    padding: 0.75rem 1rem !important;
+  }
+
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+
+  .hero-logo {
+    height: 100px;
+  }
+
+  /* About Section Mobile */
+  #about {
+    text-align: center;
+    padding: 3rem 0 !important;
+  }
+
+  #about .d-flex {
+    justify-content: center;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  .img-card {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.75rem !important;
+  }
+  
+  .eyebrow {
+    font-size: 0.8rem;
+  }
 }

@@ -27,13 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-
-
-
-
-
-
 // ---------------- Cart System ---------------- //
 let cart = [];
 

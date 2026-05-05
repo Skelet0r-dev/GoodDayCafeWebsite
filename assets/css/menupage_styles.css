@@ -48,6 +48,23 @@
   border-color: #fcd77e;
 }
 
+/* Mobile specific nav buttons */
+.nav-btn-mobile {
+  background: linear-gradient(135deg, #fcd77e, #ffe0b4);
+  color: rgb(92, 78, 59) !important;
+  border: none;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(252, 215, 126, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-btn-mobile:hover, .nav-btn-mobile:active, .nav-btn-mobile:focus {
+  background: linear-gradient(135deg, #ffe0b4, #fcd77e);
+  transform: scale(0.95);
+  box-shadow: 0 2px 5px rgba(252, 215, 126, 0.2);
+}
+
 /* Glow effect when active or toggled */
 .nav-btn.active-glow {
   background: linear-gradient(135deg, #fcd77e, #ffe0b4); /* glowing background */
@@ -283,9 +300,11 @@
 @media (max-width: 576px) {
 
   /* Prevent horizontal overflow */
-  body,
-  html {
-    overflow-x: hidden;
+  /* Prevent horizontal overflow without breaking sticky */
+  html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
   }
 
   /* Hero / carousel */

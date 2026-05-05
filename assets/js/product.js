@@ -5,8 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
     "Hot Drink": document.querySelector(".hot-drinks-container"),
     Frappe: document.querySelector(".frappe-drinks-container"),
     Refresher: document.querySelector(".refresher-drinks-container"),
-    Pizza: document.querySelector(".pizza-container"),
-    Pasta: document.querySelector(".pasta-container"),
     Pastry: document.querySelector(".pastries-container"),
   };
 
@@ -119,6 +117,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to add an item to the cart
   function addToCart(product) {
+    if (typeof isGuest !== "undefined" && isGuest) {
+      alert("Please log in to place an order.");
+      window.location.href = "loginandregis.html";
+      return;
+    }
+
     const existingItemIndex = cartItems.findIndex((item) => item.name === product.name);
 
     if (existingItemIndex !== -1) {
@@ -260,11 +264,45 @@ document.addEventListener("DOMContentLoaded", function () {
   const navButtons = document.querySelectorAll(".toggle-nav");
 
   navButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-      const isActive = this.classList.contains("active-glow");
-      navButtons.forEach((btn) => btn.classList.remove("active-glow"));
-      if (!isActive) {
-        this.classList.add("active-glow");
+    button.addEventListener("click", function (e) {
+      const href = this.getAttribute("href");
+      
+      // If it's an internal link, handle it manually to prevent offcanvas scroll bugs
+      if (href && href.startsWith("#") && href.length > 1) {
+        e.preventDefault(); // Stop default jump
+        
+        const target = document.querySelector(href);
+        if (target) {
+          // Update active state
+          navButtons.forEach((btn) => btn.classList.remove("active-glow"));
+          this.classList.add("active-glow");
+
+          // Close the offcanvas if we are inside one
+          const offcanvasEl = this.closest('.offcanvas');
+          if (offcanvasEl) {
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (bsOffcanvas) {
+              bsOffcanvas.hide();
+              
+              // Wait for offcanvas to finish hiding before scrolling
+              offcanvasEl.addEventListener('hidden.bs.offcanvas', function handler() {
+                target.scrollIntoView({ behavior: 'smooth' });
+                offcanvasEl.removeEventListener('hidden.bs.offcanvas', handler);
+              }, { once: true });
+            } else {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          } else {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      } else {
+        // Normal behavior for other buttons (like profile/cart)
+        const isActive = this.classList.contains("active-glow");
+        navButtons.forEach((btn) => btn.classList.remove("active-glow"));
+        if (!isActive) {
+          this.classList.add("active-glow");
+        }
       }
     });
   });

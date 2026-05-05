@@ -17,33 +17,29 @@ if ($rowname === false) {
               </script>");
 }
 
-// Verify password
-$stmtPass = $conn->prepare("SELECT * FROM users WHERE email = ? AND pass = ?");
-$stmtPass->execute([$email, $password]);
-$rowpass = $stmtPass->fetch(PDO::FETCH_ASSOC);
-
-if ($rowpass === false) {
+// Verify password using password_verify
+if (!password_verify($password, $rowname['pass'])) {
     die("<script>
                 alert('Wrong Password');
                 window.location.href='loginandregis.html';
               </script>");
-} else if ($rowpass['status'] == "STAFF") {
-    if (isset($_POST['rememberMe'])) {
-        setcookie("rememberEmail", $email, time() + (86400 * 30), "/", "", false, true);
-    }
-    $_SESSION['fname'] = $rowpass['firstname'];
-    $_SESSION['lname'] = $rowpass['lastname'];
+}
+
+// Set common session variables
+$_SESSION['user_id'] = $rowname['user_id'];
+$_SESSION['fname']   = $rowname['firstname'];
+$_SESSION['lname']   = $rowname['lastname'];
+$_SESSION['email']   = $rowname['email'];
+$_SESSION['status']  = $rowname['status'];
+
+if (isset($_POST['rememberMe'])) {
+    setcookie("rememberEmail", $email, time() + (86400 * 30), "/", "", false, true);
+}
+
+if ($rowname['status'] == "STAFF") {
     header("Location: admin/adminpage.php");
     exit;
 } else {
-    if (isset($_POST['rememberMe'])) {
-        setcookie("rememberEmail", $email, time() + (86400 * 30), "/", "", false, true);
-    }
-    $_SESSION['user_id'] = $rowpass['user_id'];
-    $_SESSION['fname']   = $rowpass['firstname'];
-    $_SESSION['lname']   = $rowpass['lastname'];
-    $_SESSION['email']   = $rowpass['email'];
-    $_SESSION['status']  = $rowpass['status'];
     header("Location: menupage.php");
     exit;
 }

@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
     $allowedPositions = ['Ongoing', 'Completed', 'Cancelled'];
 
     if ($orderId > 0 && in_array($newPosition, $allowedPositions, true)) {
-        $updateSql = "UPDATE `order` SET POSITION = ? WHERE ORDER_ID = ?";
+        $updateSql = "UPDATE `orders` SET POSITION = ? WHERE ORDER_ID = ?";
         try {
             $dbConnection->prepare($updateSql)->execute([$newPosition, $orderId]);
         } catch (PDOException $e) {
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_position'])) {
             SUM(oi.quantity * oi.price) AS revenue,
             SUM(oi.quantity)            AS units,
             COUNT(DISTINCT o.order_id)  AS orders
-        FROM `order` o
+        FROM `orders` o
         JOIN order_item oi ON oi.order_id = o.order_id
         WHERE 1=1
     ";
@@ -103,7 +103,7 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
             oi.quantity,
             oi.price,
             (oi.quantity * oi.price) AS line_total
-        FROM `order` o
+        FROM `orders` o
         JOIN order_item oi ON oi.order_id = o.order_id
         WHERE 1=1
     ";
@@ -139,6 +139,40 @@ function fetchTransactions($dbConnection, ?string $startDate = null, ?string $en
     return $transactionRecords;
 }
 
+// Fetch Dashboard Stats
+function fetchDashboardStats($dbConnection) {
+    $stats = [
+        'total_revenue' => 0,
+        'total_orders'  => 0,
+        'active_orders' => 0,
+        'best_seller'   => 'None'
+    ];
+
+    try {
+        // Revenue and Total Orders
+        $res = $dbConnection->query("SELECT SUM(total_price) as rev, COUNT(*) as cnt FROM `orders`")->fetch();
+        $stats['total_revenue'] = $res['rev'] ?? 0;
+        $stats['total_orders']  = $res['cnt'] ?? 0;
+
+        // Active Orders (Ongoing)
+        $res = $dbConnection->query("SELECT COUNT(*) as cnt FROM `orders` WHERE position = 'Ongoing'")->fetch();
+        $stats['active_orders'] = $res['cnt'] ?? 0;
+
+        // Best Seller
+        $res = $dbConnection->query("
+            SELECT product_name, SUM(quantity) as qty 
+            FROM order_item 
+            GROUP BY product_id 
+            ORDER BY qty DESC 
+            LIMIT 1
+        ")->fetch();
+        $stats['best_seller'] = $res['product_name'] ?? 'None';
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+    }
+    return $stats;
+}
+
 function normalizeImagePath(?string $filepath): ?string
 {
     if (!$filepath) {
@@ -152,6 +186,10 @@ function normalizeImagePath(?string $filepath): ?string
 }
 
 session_start();
+if (!isset($_SESSION['status']) || $_SESSION['status'] !== 'STAFF') {
+    header("Location: ../loginandregis.html");
+    exit;
+}
 require_once __DIR__ . '/../db_config.php';
 $dbConnection = $conn;
 
@@ -167,6 +205,21 @@ $productId   = (isset($_GET['productId']) && $_GET['productId'] !== '') ? (int)$
 
 $reportSummary = fetchSalesSummary($dbConnection, $granularity, $startDate, $endDate, $productId);
 $reportDetail  = fetchTransactions($dbConnection, $startDate, $endDate, $productId);
+$dashStats     = fetchDashboardStats($dbConnection);
+
+// Handle Product Deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product'])) {
+    $delId = (int)$_POST['product_id'];
+    if ($delId > 0) {
+        try {
+            $dbConnection->prepare("DELETE FROM products WHERE product_id = ?")->execute([$delId]);
+            header("Location: adminpage.php#addproduct");
+            exit;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+        }
+    }
+}
 
 $firstName = $_SESSION['fname'] ?? 'Admin';
 $lastName  = $_SESSION['lname'] ?? '';
@@ -205,9 +258,9 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
     <meta charset="utf-8">
     <title>Admin Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/demo/GoodayCafeWebsite-main/admin/adminpage.css">
+    <link rel="stylesheet" href="adminpage.css">
 </head>
 <body class="d-flex flex-column align-items-center">
 
@@ -290,30 +343,6 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
               </div>
             </div>
 
-            <div class="row g-4 mb-5" id="productPizzaRow">
-              <div style="padding-top: 20px;">
-                <div class="container-fluid">
-                  <div class="container text-start">
-                    <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pizza</h1>
-                    <p>Check out some of our popular Pizza items!</p>
-                  </div>
-                  <div class="row g-4 pizza-container"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row g-4 mb-5" id="productPastaRow">
-              <div style="padding-top: 20px;">
-                <div class="container-fluid">
-                  <div class="container text-start">
-                    <h1 class="font-playfair fw-bold" style="font-size: 100px;">Pasta</h1>
-                    <p>Check out some of our popular Pasta items!</p>
-                  </div>
-                  <div class="row g-4 pasta-container"></div>
-                </div>
-              </div>
-            </div>
-
             <div class="row g-4 mb-5" id="productPastryRow">
               <div style="padding-top: 20px;">
                 <div class="container-fluid">
@@ -325,11 +354,51 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
                 </div>
               </div>
             </div>
+
+       
+
+            
             <!-- End Category Sections -->
         </div>
 
         <!-- Reports Tab -->
         <div class="tab-pane fade show active" id="reports">
+            <!-- Dashboard Cards -->
+            <div class="row g-3 mb-4 mt-2">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white shadow-sm border-0">
+                        <div class="card-body">
+                            <h6 class="card-title opacity-75">Total Revenue</h6>
+                            <h3 class="fw-bold">₱<?= number_format($dashStats['total_revenue'], 2) ?></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white shadow-sm border-0">
+                        <div class="card-body">
+                            <h6 class="card-title opacity-75">Total Orders</h6>
+                            <h3 class="fw-bold"><?= number_format($dashStats['total_orders']) ?></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark shadow-sm border-0">
+                        <div class="card-body">
+                            <h6 class="card-title opacity-75">Active Orders</h6>
+                            <h3 class="fw-bold"><?= number_format($dashStats['active_orders']) ?></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white shadow-sm border-0">
+                        <div class="card-body">
+                            <h6 class="card-title opacity-75">Best Seller</h6>
+                            <h4 class="fw-bold text-truncate"><?= htmlspecialchars($dashStats['best_seller']) ?></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <h4>Sales Reports</h4>
             <form class="row g-2 mb-3" method="get">
                 <div class="col-md-3">
@@ -394,14 +463,22 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
 <?php else: ?>
     <?php foreach ($reportDetail as $transactionRow): ?>
         <tr>
-            <td><?= (int)$transactionRow['ORDER_ID']; ?></td>
-            <td><?= htmlspecialchars($transactionRow['USER_ID'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= htmlspecialchars($transactionRow['ORDER_PLACED'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= htmlspecialchars($transactionRow['POSITION'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= (int)$transactionRow['PRODUCT_ID']; ?></td>
-            <td><?= htmlspecialchars($transactionRow['PRODUCT_NAME'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?= (int)$transactionRow['QUANTITY']; ?></td>
-            <td>₱<?= number_format((float)$transactionRow['PRICE'], 2); ?></td>
+            <td><?= (int)$transactionRow['order_id']; ?></td>
+            <td><?= htmlspecialchars($transactionRow['user_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= htmlspecialchars($transactionRow['order_placed'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td>
+                <?php 
+                    $pos = htmlspecialchars($transactionRow['position'], ENT_QUOTES, 'UTF-8');
+                    $badgeClass = 'badge-ongoing';
+                    if ($pos === 'Completed') $badgeClass = 'badge-completed';
+                    if ($pos === 'Cancelled') $badgeClass = 'badge-cancelled';
+                ?>
+                <span class="badge <?= $badgeClass; ?>"><?= $pos; ?></span>
+            </td>
+            <td><?= (int)$transactionRow['product_id']; ?></td>
+            <td><?= htmlspecialchars($transactionRow['product_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?= (int)$transactionRow['quantity']; ?></td>
+            <td>₱<?= number_format((float)$transactionRow['price'], 2); ?></td>
             <td>₱<?= number_format((float)$transactionRow['line_total'], 2); ?></td>
             <td>
                 <form method="post" class="d-flex gap-1 align-items-center">
@@ -461,8 +538,6 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
                     <option value="Frappe">Frappe</option>
                     <option value="Refresher">Refresher</option>
                     <option value="Pastry">Pastry</option>
-                    <option value="Pizza">Pizza</option>
-                    <option value="Pasta">Pasta</option>
                 </select>
             </div>
             <div class="col-12">
@@ -479,6 +554,49 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
   </div>
 </div>
 
+<!-- Edit Product Modal -->
+<div class="modal fade" id="edit-product-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" method="post" action="update_product.php">
+            <input type="hidden" name="productId" id="editProductId">
+            <div class="col-md-6">
+                <label class="form-label">Product Name</label>
+                <input type="text" class="form-control" name="productName" id="editProductName" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Price</label>
+                <input type="number" class="form-control" name="productPrice" id="editProductPrice" required>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" name="productDescription" id="editProductDescription" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Category</label>
+                <select name="productCategory" class="form-select" id="editProductCategory" required>
+                    <option value="Iced Drink">Iced Drink</option>
+                    <option value="Hot Drink">Hot Drink</option>
+                    <option value="Frappe">Frappe</option>
+                    <option value="Refresher">Refresher</option>
+                    <option value="Pastry">Pastry</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update Product</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- User Profile Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="userProfile" aria-labelledby="userProfileLabel">
     <div class="offcanvas-header">
@@ -488,14 +606,14 @@ while ($productRow = $productsStmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="offcanvas-body">
         <p><strong>First Name:</strong> <?php echo htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8'); ?></p>
         <p><strong>Last Name:</strong> <?php echo htmlspecialchars($lastName, ENT_QUOTES, 'UTF-8'); ?></p>
-        <a href="/demo/GoodayCafeWebsite-main/loginandregis.html" class="btn btn-danger mt-3">Logout</a>
+        <a href="../logout.php" class="btn btn-danger mt-3">Logout</a>
     </div>
 </div>
 
 <script>
     const products = <?php echo json_encode($products); ?>;
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

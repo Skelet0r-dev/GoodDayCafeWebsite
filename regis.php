@@ -20,11 +20,12 @@ if ($emailcheck !== false) {
               </script>";
     exit;
 } else {
+    $hashedPass = password_hash($passReg, PASSWORD_DEFAULT);
     $insertStmt = $conn->prepare(
         "INSERT INTO users (firstname, lastname, dateofbirth, email, pass, status)
          VALUES (?, ?, ?, ?, ?, ?)"
     );
-    $result = $insertStmt->execute([$fname, $lname, $bday, $emailReg, $passReg, $status]);
+    $result = $insertStmt->execute([$fname, $lname, $bday, $emailReg, $hashedPass, $status]);
 
     if ($result) {
         echo "<script>
